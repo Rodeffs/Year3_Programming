@@ -24,7 +24,7 @@ def main():
         print("No files with size <", size_check, "bytes were found")
         return
 
-    Path("./small").mkdir(exist_ok=True)  # чтобы не было ошибки, если уже существует
+    Path("./small").mkdir(exist_ok=True)
 
     for file in file_list:
         print(file)
