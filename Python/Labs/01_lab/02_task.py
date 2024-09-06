@@ -21,7 +21,6 @@ def main():
 
     # Если не даны файлы для проверок, то просто выводим инфу о папке
     if not args.files:
-        
         total_size = 0
 
         for file in file_list:
