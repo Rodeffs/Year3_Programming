@@ -27,7 +27,7 @@ def main():
     Path("./small").mkdir(exist_ok=True)  # чтобы не было ошибки, если уже существует
 
     for file in file_list:
-        print(file)
+        print(file.name)
         copy(file, "./small/" + file.name)
 
 
