@@ -23,7 +23,6 @@ def main():
 
     # Считываем информацию о несуществующих файлах
     missing_files = open(readFile)
-    missing_list = []
 
     # Создаём эти файлы
     try:
