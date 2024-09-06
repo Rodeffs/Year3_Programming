@@ -1,5 +1,4 @@
 from argparse import ArgumentParser  # парсить аргументы
-from os import truncate
 from pathlib import Path
 from glob import glob
 
