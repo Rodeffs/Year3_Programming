@@ -32,3 +32,4 @@ with Image.open("test.jpg") as img:
     # Синие 
     img.putdata(blue_channel)
     img.show()
+
