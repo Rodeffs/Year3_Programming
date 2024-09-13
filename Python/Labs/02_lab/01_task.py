@@ -1,7 +1,7 @@
 from PIL import Image
 
 
-with Image.open("test.jpg") as img:
+with Image.open("resources/test.jpg") as img:
 
     img_data = img.getdata()  # получаем информацию об изображении
 

@@ -1,8 +1,8 @@
 from PIL import Image, ImageDraw
 
 
-with Image.open("test.jpg") as img:
-    with Image.open("watermark.png") as watermark:
+with Image.open("resources/test.jpg") as img:
+    with Image.open("resources/watermark.png") as watermark:
 
         # Я хочу разместить её в центр, следовательно нужно поместить её в координаты ((W - w)/2, (H - h)/2)
         # где W - это ширина исходного изображения, w - ширина ватермарки, H - высота исходного, h - высота ватермарки 
@@ -20,4 +20,4 @@ with Image.open("test.jpg") as img:
 
         img.show()
 
-        img.save("image_with_watermark.jpg", "JPEG")
+        img.save("outputs/image_with_watermark.jpg", "JPEG")
