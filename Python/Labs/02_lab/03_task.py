@@ -1,4 +1,4 @@
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw
 
 
 with Image.open("test.jpg") as img:
@@ -12,7 +12,7 @@ with Image.open("test.jpg") as img:
 
         img.paste(watermark, (watermarkX, watermarkY))
 
-        # Теперь пишем текст, его координаты будут ((W - w)/2, (H + h)/2)
+        # Теперь пишем текст в тех же координатах
 
         draw = ImageDraw.Draw(img)
 
