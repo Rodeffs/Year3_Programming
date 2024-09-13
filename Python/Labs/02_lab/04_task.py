@@ -1,17 +1,22 @@
 from PIL import Image, ImageDraw
 
 
-for i in range(1, 4):
+def main():
 
-    img = Image.new("RGB", (100, 100))
+    for i in range(1, 4):
 
-    draw = ImageDraw.Draw(img)
+        img = Image.new("RGB", (100, 100))
 
-    draw.rectangle([0, 0, 100, 100], outline=(0, 0, 255), width=5)
+        draw = ImageDraw.Draw(img)
 
-    draw.text((33, 15), str(i), font_size = 60, fill=(255, 0, 0))
+        draw.rectangle([0, 0, 100, 100], outline=(0, 0, 255), width=5)
 
-    img.show()
+        draw.text((33, 15), str(i), font_size = 60, fill=(255, 0, 0))
 
-    img.save("outputs/" + str(i) + ".png", "PNG")
+        img.show()
 
+        img.save("outputs/" + str(i) + ".png", "PNG")
+
+
+if __name__ == "__main__":
+    main()
