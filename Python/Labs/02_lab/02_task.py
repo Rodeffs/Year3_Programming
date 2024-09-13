@@ -21,9 +21,9 @@ with Image.open(argv[1]) as img:
     if max(red, green, blue) == red:
         print("The color RED is used the most")
 
-    elif green:
+    elif max(red, green, blue) == green:
         print("The color GREEN is used the most")
 
-    elif blue:
+    elif max(red, green, blue) == blue:
         print("The color BLUE is used the most")
 
