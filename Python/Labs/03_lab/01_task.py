@@ -133,7 +133,6 @@ def apply_augments(images, args):  # если для каждой аугмент
             count = save(image, args.dir, count)
 
 
-
 def main():
     
     args = parse()
