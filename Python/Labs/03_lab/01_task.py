@@ -1,5 +1,4 @@
 from argparse import ArgumentParser
-from re import S
 from skimage import io, transform, util, exposure, filters, draw
 from random import randrange, random, uniform
 from pathlib import Path
