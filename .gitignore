@@ -2,7 +2,9 @@
 **/cmake-build-debug
 **/build
 **/__pycache__
-**/credentials.json
+**/.vs
+**/Release
+**/Debug
 *.ipynb_*
 
 Python/Labs/01_lab/small/**
