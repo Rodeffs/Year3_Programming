@@ -1,0 +1,13 @@
+﻿  Shapes.cpp
+C:\Users\owner\Downloads\Painter42\Painter\Shapes.cpp(311,1): warning C4838: conversion from 'int' to 'UINT' requires a narrowing conversion
+  (compiling source file '/Shapes.cpp')
+  
+C:\Users\owner\Downloads\Painter42\Painter\Shapes.cpp(388,1): warning C4838: conversion from 'int' to 'UINT' requires a narrowing conversion
+  (compiling source file '/Shapes.cpp')
+  
+  Generating code
+  1 of 524 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  Painter.vcxproj -> C:\Users\owner\Downloads\Painter42\Release\Painter.exe
