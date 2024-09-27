@@ -21,8 +21,8 @@ def main():
 
     video = VideoFileClip(args.i)
 
-    begin = args.b if (args.b < video.duration and args.b >= 0) else 0
-    end = args.e if (args.e < video.duration and args.e >= 0) else video.duration
+    begin = args.b if (args.b <= video.duration and args.b >= 0) else 0
+    end = args.e if (args.e <= video.duration and args.e >= 0) else video.duration
 
     if begin > end:  # чтобы не было отрицательных значений
         begin, end = end, begin
