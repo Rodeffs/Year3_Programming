@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from moviepy.editor import VideoFileClip
+from moviepy.editor import *
 
 
 def parse():
@@ -7,18 +7,19 @@ def parse():
 
     parser.add_argument("-i", required=True, help="the input file to clip")
 
-    parser.add_argument("-o", required=True, help="the name of the output file, works with mp4 only")
+    parser.add_argument("-o", required=True, help="the path to the output directory")
 
     parser.add_argument("-b", type=float, default=0, help="the start of the clip, will default to 0 if bigger than video duration")
 
     parser.add_argument("-e", type=float, default=-1, help="the end of the clip, will default to input duration if bigger than it")
+
+    parser.add_argument("-s", type=int, default=10, help="the time steps to clip")
 
     return parser.parse_args()
 
 
 def main():
     args = parse()
-
     video = VideoFileClip(args.i)
 
     begin = args.b if (args.b < video.duration and args.b >= 0) else 0
@@ -27,16 +28,15 @@ def main():
     if begin > end:  # чтобы не было отрицательных значений
         begin, end = end, begin
     
-    clip = video.subclip(begin, end)
+    time = begin
+    count = 0
 
-    try:
-        clip.write_videofile(args.o)
+    while time < end:
+        video.save_frame(args.o + "/" + str(count) + ".png", time)
+        time += args.s
+        count += 1
 
-    except:
-        print("Error while saving video file. Remember, only mp4 output is supported")
-
-    finally:
-        video.close()
+    video.close() 
 
 
 if __name__ == "__main__":
