@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from moviepy.editor import *
+from moviepy.editor import VideoFileClip
 
 
 def parse():
