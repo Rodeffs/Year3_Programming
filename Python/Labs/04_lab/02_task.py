@@ -20,6 +20,7 @@ def parse():
 
 def main():
     args = parse()
+
     video = VideoFileClip(args.i)
 
     begin = args.b if (args.b < video.duration and args.b >= 0) else 0
