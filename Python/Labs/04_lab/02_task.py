@@ -29,6 +29,8 @@ def main():
     if begin > end:  # чтобы не было отрицательных значений
         begin, end = end, begin
     
+    video = video.resize(width=250)
+
     time = begin
     count = 0
 
