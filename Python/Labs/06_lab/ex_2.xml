@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PrintData>
+    <PrinterName/>
+    <TemplateName>A4_UPL.sctmpl</TemplateName>
+    <Count>1</Count>
+    <Head>
+        <Client>SP</Client>
+        <Date>01.04.2020 14:39:23</Date>
+        <Number>000000018</Number>
+        <Barcode>UPL000000018</Barcode>
+        <Pack>000000018</Pack>
+    </Head>
+    <Detail>
+        <Item>
+            <ArtName>Сыр Рокфор </ArtName>
+            <Barcode>2000000000121</Barcode>
+            <QNT>254,4</QNT>
+            <QNTPack>254,4</QNTPack>
+            <Unit>шт</Unit>
+            <SN1>00000005</SN1>
+            <SN2>06.11.2019</SN2>
+            <QNTRows>18</QNTRows>
+        </Item>
+        <Item>
+            <ArtName>Сыр Моцарелла</ArtName>
+            <Barcode>2000000000091</Barcode>
+            <QNT>215,15</QNT>
+            <QNTPack>215,15</QNTPack>
+            <Unit>шт</Unit>
+            <SN1>00000010</SN1>
+            <SN2>31.03.2020</SN2>
+            <QNTRows>15</QNTRows>
+        </Item>
+    </Detail>
+    <Summary>
+        <Summ>469,55</Summ>
+        <SummRows>33</SummRows>
+    </Summary>
+    <Footer>
+        <Date>2020-4-9</Date>
+        <User>Аркадий Иванович</User>
+    </Footer>
+</PrintData>
