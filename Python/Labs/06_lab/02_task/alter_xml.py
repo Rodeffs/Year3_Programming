@@ -20,14 +20,13 @@ def main():
     ET.SubElement(new_item, "QNTRows").text = "12"
 
     # Добавляем новый элемент
-    detail = root.find("Detail")
-    detail.append(new_item)
+    root.find("Detail").append(new_item)
     ET.indent(tree, '    ')  # чтобы были отступы слева
 
     # Пересчитываем все значения
     summ_1, summ_2, summ_rows = 0, 0, 0
 
-    for item in detail.findall("Item"):
+    for item in root.findall("Detail/Item"):
         val_1 = item.find("QNT").text
         val_2 = item.find("QNTRows").text
 
@@ -37,9 +36,8 @@ def main():
         summ_2 += int(val_1[comma+1:])
         summ_rows += int(val_2)
 
-    summary = root.find("Summary")
-    summary.find("Summ").text = str(summ_1) + "," + str(summ_2)
-    summary.find("SummRows").text = str(summ_rows)
+    root.find("Summary/Summ").text = str(summ_1) + "," + str(summ_2)
+    root.find("Summary/SummRows").text = str(summ_rows)
 
     # Записываем:
     tree.write("new.xml", encoding="UTF-8", xml_declaration=True)
