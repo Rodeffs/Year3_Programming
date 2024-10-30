@@ -33,9 +33,13 @@
 							    <xs:element name="objectSet">
 								<xs:complexType>
 								    <xs:sequence>
-									<xs:element name="pattern" type="xs:string">
+									<xs:element name="pattern">
 									    <xs:complexType>
-										<xs:attribute name="type" type="xs:string"/>
+										<xs:simpleContent>
+										    <xs:extension base="xs:string">
+											<xs:attribute name="type" type="xs:string"/>
+										    </xs:extension>
+										</xs:simpleContent>
 									    </xs:complexType>
 									</xs:element>
 								    </xs:sequence>
@@ -58,7 +62,7 @@
 		</xs:complexType>
 	    </xs:element>
 	</xs:sequence>
-	<xs:attribute name="urlid" type="xs:string" use="required" default="http://www.microsoft.com/migration/1.0/migxmlext/CustomFile"/>
+	<xs:attribute name="urlid" type="xs:string"/>
     </xs:complexType>
 </xs:element>
 

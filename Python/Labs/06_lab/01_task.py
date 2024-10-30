@@ -1,15 +1,25 @@
-import xml.etree.ElementTree as ET
+import xmlschema
+from argparse import ArgumentParser
 
 
 def main():
+    
+    parser = ArgumentParser()
+    
+    parser.add_argument("-s", required=True, help="the xsd schema to check the files by")
 
-    # Пример, по которому будем проверять другие xml
-    example = ET.parse("ex_1.xml")
+    parser.add_argument("-f", required=True, help="the xml file to check")
 
-    # Создание неправельного файла
-    elem1 = ET.Element("migration", {"urlid": "http://www.microsoft.com/migration/1.0/migxmlext/CustomFile"})
+    args = parser.parse_args()
 
-     
+    # Загрузка схемы
+    sample = xmlschema.XMLSchema(args.s) 
+
+    # Проверка файлов по ней
+    if sample.is_valid(args.f):
+        print("This xml file is valid")
+    else:
+        print("This xml file is not valid")
 
 
 if __name__ == "__main__":
