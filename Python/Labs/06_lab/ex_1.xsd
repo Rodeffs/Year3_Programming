@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+<xs:element name="migration">
+    <xs:complexType>
+	<xs:sequence>
+	    <xs:element name="component">
+		<xs:complexType>
+		    <xs:sequence>
+			<xs:element name="displayName" type="xs:string"/>
+			<xs:element name="role">
+			    <xs:complexType>
+				<xs:sequence>
+				    <xs:element name="detects">
+					<xs:complexType>
+					    <xs:sequence>
+						<xs:element name="detect">
+						    <xs:complexType>
+							<xs:sequence>
+							    <xs:element name="condition" type="xs:string"/>
+							</xs:sequence>
+						    </xs:complexType>
+						</xs:element>
+					    </xs:sequence>
+					</xs:complexType>
+				    </xs:element>
+				    <xs:element name="rules">
+					<xs:complexType>
+					    <xs:sequence>
+						<xs:element name="include">
+						    <xs:complexType>
+							<xs:sequence>
+							    <xs:element name="objectSet">
+								<xs:complexType>
+								    <xs:sequence>
+									<xs:element name="pattern" type="xs:string">
+									    <xs:complexType>
+										<xs:attribute name="type" type="xs:string"/>
+									    </xs:complexType>
+									</xs:element>
+								    </xs:sequence>
+								</xs:complexType>
+							    </xs:element>
+							</xs:sequence>
+							<xs:attribute name="filter" type="xs:string"/>
+						    </xs:complexType>
+						</xs:element>
+					    </xs:sequence>
+					</xs:complexType>
+				    </xs:element>
+				</xs:sequence>
+				<xs:attribute name="role" type="xs:string" use="required"/>
+			    </xs:complexType>
+			</xs:element>
+		    </xs:sequence>
+		    <xs:attribute name="type" type="xs:string" use="required"/>
+		    <xs:attribute name="context" type="xs:string" use="required"/>
+		</xs:complexType>
+	    </xs:element>
+	</xs:sequence>
+	<xs:attribute name="urlid" type="xs:string" use="required" default="http://www.microsoft.com/migration/1.0/migxmlext/CustomFile"/>
+    </xs:complexType>
+</xs:element>
+
+</xs:schema>
