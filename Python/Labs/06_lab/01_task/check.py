@@ -1,4 +1,4 @@
-import xmlschema
+from xmlschema import XMLSchema
 from argparse import ArgumentParser
 
 
@@ -10,7 +10,7 @@ def main():
     args = parser.parse_args()
 
     # Загрузка схемы
-    sample = xmlschema.XMLSchema(args.s) 
+    sample = XMLSchema(args.s) 
 
     # Проверка файлов по ней
     if sample.is_valid(args.f):
