@@ -5,11 +5,8 @@ from argparse import ArgumentParser
 def main():
     
     parser = ArgumentParser()
-    
     parser.add_argument("-s", required=True, help="the xsd schema to check the files by")
-
     parser.add_argument("-f", required=True, help="the xml file to check")
-
     args = parser.parse_args()
 
     # Загрузка схемы
