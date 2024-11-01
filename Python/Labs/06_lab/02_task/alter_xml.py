@@ -24,19 +24,16 @@ def main():
     ET.indent(tree, '    ')  # чтобы были отступы слева
 
     # Пересчитываем все значения
-    summ_1, summ_2, summ_rows = 0, 0, 0
+    summ, summ, summ_rows = 0, 0, 0
 
     for item in root.findall("Detail/Item"):
-        val_1 = item.find("QNT").text
+        val_1 = item.find("QNT").text.replace(",", ".")
         val_2 = item.find("QNTRows").text
 
-        comma = val_1.index(",")
-
-        summ_1 += int(val_1[:comma])
-        summ_2 += int(val_1[comma+1:])
+        summ += float(val_1)
         summ_rows += int(val_2)
 
-    root.find("Summary/Summ").text = str(summ_1) + "," + str(summ_2)
+    root.find("Summary/Summ").text = str(summ).replace(".", ",")
     root.find("Summary/SummRows").text = str(summ_rows)
 
     # Записываем:
