@@ -1,6 +1,14 @@
 {
     "users":[
 	{
+	   "name":"Estel Kuhn",
+	   "phoneNumber":"967.297.2078",
+	   "email":"lruecker@trantow.com",
+	   "address":"30629 Miller Streets\nEast Tiannafort, NC 95541",
+	   "userAgent":"Mozilla\/5.0 (Macintosh; PPC Mac OS X 10_5_0 rv:3.0; en-US) AppleWebKit\/531.36.3 (KHTML, like Gecko) Version\/4.0.4 Safari\/531.36.3",
+	   "hexcolor":"#5d9334"
+	},
+	{
 	   "name":"Jeramie Hahn",
 	   "phoneNumber":"+1 (278) 799-5053",
 	   "email":"rowan12@gmail.com",
