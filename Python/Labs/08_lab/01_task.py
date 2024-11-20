@@ -11,8 +11,8 @@ def main():
     
     # Создание таблицы через SQL запрос:
     cur.execute("""
-                CREATE TABLE IF NOT EXISTS Couriers(
-                id_courier INT PRIMARY KEY,
+                CREATE TABLE IF NOT EXISTS couriers(
+                id INT PRIMARY KEY,
                 surname TEXT,
                 name TEXT,
                 second_name TEXT,
@@ -36,9 +36,9 @@ def main():
     
     # Аналогично для второй таблицы:
     cur.execute("""
-                CREATE TABLE IF NOT EXISTS Transport(
-                vehicle_number INT PRIMARY KEY,
-                vehicle_model TEXT,
+                CREATE TABLE IF NOT EXISTS transport(
+                number INT PRIMARY KEY,
+                model TEXT,
                 date_of_registration TEXT,
                 colour TEXT
                 );
@@ -48,14 +48,14 @@ def main():
 
     # Внесение данных
     cur.execute("""
-                INSERT INTO Couriers(id_courier, surname, name, second_name, passport_number, date_of_birth, date_of_employment, clock_in_time, clock_out_time, city, street, house_number, apartment_number, phone_number)
+                INSERT INTO couriers(id, surname, name, second_name, passport_number, date_of_birth, date_of_employment, clock_in_time, clock_out_time, city, street, house_number, apartment_number, phone_number)
                 VALUES('1', 'House', 'Robert', 'Edwin', '77738', '25.05.2020', '20.11.2274', '09:00', '17:00', 'Las Vegas', 'Las Vegas Strip', '38', '1', '478901');
                 """)
 
     conn.commit()
 
     cur.execute("""
-                INSERT INTO Transport(vehicle_number, vehicle_model, date_of_registration, colour)
+                INSERT INTO transport(number, model, date_of_registration, colour)
                 VALUES('50918', 'Highwayman', '20.11.2024', 'red');
                 """)
 
@@ -63,7 +63,7 @@ def main():
 
     # Изменение данных
     cur.execute("""
-                UPDATE Transport SET colour = 'black' WHERE vehicle_number = 50918; 
+                UPDATE transport SET colour = 'black' WHERE number = 50918; 
                 """)
 
     conn.commit()
