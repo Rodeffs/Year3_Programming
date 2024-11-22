@@ -33,7 +33,8 @@ def main():
 
         for entry in occupation:
             occupation_name = entry['Отдел']
-
+            
+            # round() необходим, чтобы правильно считать дробную часть, иначе будут погрешности
             entry['Сумма по окладу, руб.'] = round(entry['Сумма по окладу, руб.'], 2)
             entry['Сумма по надбавкам, руб.'] = round(entry['Сумма по надбавкам, руб.'], 2)
 
@@ -63,7 +64,7 @@ def main():
     
     sheet.append(["", "", "Общий итог", grand_total1, grand_total2, grand_total3, "", grand_total4, grand_total5])
 
-    wb.save("test.xlsx")
+    wb.save("salaries.xlsx")
 
 
 if __name__ == "__main__":
