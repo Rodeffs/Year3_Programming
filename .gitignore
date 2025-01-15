@@ -7,7 +7,3 @@
 **/Debug
 *.ipynb_*
 
-Python/Labs/01_lab/small/**
-Python/Labs/01_lab/missing_files.txt
-Python/Labs/01_lab/existing_files.txt
-
