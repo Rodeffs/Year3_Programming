@@ -35,6 +35,28 @@ public class Main {
 		break;
 
 	    case 3:
+		System.out.print("Введите координату x клада: ");
+		int x = in.nextInt();
+		System.out.print("Введите координату y клада: ");
+		int y = in.nextInt();
+
+		System.out.println("Введите указания:");
+		ArrayList<String[]> directions = new ArrayList<String[]>();
+
+		String input = in.nextLine();
+
+		while ((input != "стоп") || (input != "")) {
+		    String[] direction = new String[2];
+
+		    for (int i = 0; i < 2; i++) {
+			direction[i] = input;
+			input = in.nextLine();
+		    }
+
+		    directions.add(direction);
+		}
+		
+		System.out.println("Минимальное количество указаний: " + find_treasure(x, y, directions));
 		break;
 
 	    case 4:
@@ -80,6 +102,8 @@ public class Main {
 
 	in.close();
     }
+    
+    // Задание 1
 
     static int count = 0;
 
@@ -97,6 +121,8 @@ public class Main {
 	count++;
 	collatz_conjecture(n);
     }
+
+    // Задание 2
 
     static boolean minus = false;
 
@@ -116,6 +142,15 @@ public class Main {
 
 	return sum;
     }
+
+    // Задание 3
+
+    static int find_treasure(int x, int y, ArrayList<String[]> directions) {
+
+	return 0;
+    }
+
+    // Задание 4
 
     static int find_min(ArrayList<Integer> array) {
 	int min = Integer.MAX_VALUE;
@@ -145,6 +180,8 @@ public class Main {
 
 	return optimal_road;
     }
+
+    // Задание 5
 
     static boolean twice_even(int number) {
 	int sum = 0, mult = 1;
