@@ -40,23 +40,7 @@ public class Main {
 		System.out.print("Введите координату y клада: ");
 		int y = in.nextInt();
 
-		System.out.println("Введите указания:");
-		ArrayList<String[]> directions = new ArrayList<String[]>();
-
-		String input = in.nextLine();
-
-		while ((input != "стоп") || (input != "")) {
-		    String[] direction = new String[2];
-
-		    for (int i = 0; i < 2; i++) {
-			direction[i] = input;
-			input = in.nextLine();
-		    }
-
-		    directions.add(direction);
-		}
-		
-		System.out.println("Минимальное количество указаний: " + find_treasure(x, y, directions));
+		System.out.println("Минимальное количество указаний: " + find_treasure(x, y));
 		break;
 
 	    case 4:
@@ -145,9 +129,53 @@ public class Main {
 
     // Задание 3
 
-    static int find_treasure(int x, int y, ArrayList<String[]> directions) {
+    static int find_treasure(int x_goal, int y_goal) {
+	int shortest_path = 0, x = 0, y = 0;
+	boolean goal_reached = false;
+	Scanner in = new Scanner(System.in);
+	
+	System.out.println("Введите указания:");
 
-	return 0;
+	String direction = in.next();
+	int steps = in.nextInt();
+
+	// Я сначала подумал, что нужно построить путь, имея на вход лишь исходные данные, но оказалось всё гораздо проще
+	// По сути мы тут же идём в указании, которое было введёно, таким образом получим кратчайший путь
+	// Очевидно, что если выполнение предыдущих указаний уже привело нас к кладу, то дальше их не надо учитывать
+
+	while (!direction.equals("стоп")) {
+	    if ((x == x_goal) && (y == y_goal)) {
+		goal_reached = true;
+	    }
+	    
+	    // ЗАПОМНИТЬ: в Java оператор == проверяет, что это один и тот же объект, а не одно и то же значение (для этого нужен .equals())
+
+	    if (direction.equals("север")) {
+		y += steps;
+	    }
+	    else if (direction.equals("юг")) {
+		y -= steps;
+	    }
+	    else if (direction.equals("запад")) {
+		x -= steps;
+	    }
+	    else if (direction.equals("восток")) {
+		x += steps;
+	    }
+
+	    if (!goal_reached) {
+		shortest_path++;	
+	    }
+
+	    direction = in.next();
+
+	    if (!direction.equals("стоп")) {
+		steps = in.nextInt();
+	    }
+	}
+	
+	in.close();
+	return shortest_path;
     }
 
     // Задание 4
