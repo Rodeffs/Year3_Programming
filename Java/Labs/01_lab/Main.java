@@ -2,34 +2,19 @@ import java.util.Scanner;
 
 public class Main {
 
+    static Scanner in = new Scanner(System.in);  // чтобы миллион раз не создавать новый сканнер
+
     public static void main(String[] args) {
 	System.out.println("Задания:\n1. Сиракузская последовательность\n2. Сумма ряда\n3. Ищем клад\n4. Логистический максимин\n5. Дважды чётное число");
 	System.out.print("Введите номер задания (1-5): ");
 
-	Scanner in = new Scanner(System.in);
-
-	int lab = in.nextInt();
-
-	switch(lab) {
+	switch(in.nextInt()) {
 	    case 1:
-		System.out.print("Введите натуральное число: ");
-
-		collatz_conjecture(in.nextInt());
-
-		System.out.println("Потребовалось " + count + " шагов");
+		collatz_conjecture();
 		break;
 
 	    case 2:
-		System.out.print("Введите количество чисел в знакочередующемся ряде: ");
-		int size = in.nextInt();
-		int[] numbers = new int[size];
-    
-		System.out.println("Введите " + size + " чисел:");
-
-		for (int i = 0; i < size; i++) 
-		    numbers[i] = in.nextInt();
-
-		System.out.println("Сумма ряда: " + row_sum(numbers));
+		row_sum();
 		break;
 
 	    case 3:
@@ -41,13 +26,7 @@ public class Main {
 		break;
 
 	    case 5:
-		System.out.print("Введите положительное трёхзначное число: ");
-
-		if (twice_even(in.nextInt())) 
-		    System.out.println("Это дважды чётное число");
-		else 
-		    System.out.println("Это не дважды чётное число");
-
+		twice_even();
 		break;
 
 	    default:
@@ -61,7 +40,7 @@ public class Main {
 
     static int count = 0;
 
-    static void collatz_conjecture(int n) {
+    static void hailstone_sequence(int n) {
 	if (n == 1) 
 	    return;
 	else if (n % 2 == 0) 
@@ -70,17 +49,30 @@ public class Main {
 	    n = 3*n + 1;
 
 	count++;
-	collatz_conjecture(n);
+	hailstone_sequence(n);
     }
+
+    static void collatz_conjecture() {
+	System.out.print("Введите натуральное число: ");
+	hailstone_sequence(in.nextInt());
+
+	System.out.println("Потребовалось " + count + " шагов");
+    } 
 
     // Задание 2
 
-    static boolean minus = false;
+    static void row_sum() {
+	System.out.print("Введите количество чисел в знакочередующемся ряде: ");
+	int size = in.nextInt();
 
-    static int row_sum(int[] numbers) {
 	int sum = 0;
+	boolean minus = false;
 
-	for (int number : numbers) {
+	System.out.println("Введите " + size + " чисел:");
+
+	for (int i = 0; i < size; i++) {
+	    int number = in.nextInt();
+
 	    if (minus) {
 		sum -= number;
 		minus = false;
@@ -91,14 +83,12 @@ public class Main {
 	    }
 	}
 
-	return sum;
+	System.out.println("Сумма ряда: " + sum);
     }
 
     // Задание 3
 
     static void find_treasure() {
-	Scanner in = new Scanner(System.in);
-
 	System.out.print("Введите координату x клада: ");
 	int x_goal = in.nextInt();
 
@@ -142,14 +132,11 @@ public class Main {
 	}
 	
 	System.out.println("Минимальное количество указаний: " + shortest_path);
-	in.close();
     }
 
     // Задание 4
     
     static void find_optimal_path() {
-	Scanner in = new Scanner(System.in);
-
 	System.out.print("Введите количество дорог: ");
 	int road_count = in.nextInt();
 
@@ -157,7 +144,9 @@ public class Main {
 	
 	for (int i = 1; i <= road_count; i++) {
 	    System.out.print("Введите количество туннелей для " + i + " дороги: ");
-	    int tunnel_count = in.nextInt(), min_tunnel = Integer.MAX_VALUE;
+	    int tunnel_count = in.nextInt();
+
+	    int min_tunnel = Integer.MAX_VALUE;
 
 	    System.out.println("Введите высоту каждого туннеля:");
 
@@ -176,12 +165,14 @@ public class Main {
 
 	String output = String.format("Оптимальные дорога и высота грузовика: %d %d", optimal_road, optimal_height);
 	System.out.println(output);
-	in.close();
     }
 
     // Задание 5
 
-    static boolean twice_even(int number) {
+    static void twice_even() {
+	System.out.print("Введите положительное трёхзначное число: ");
+	int number = in.nextInt();
+
 	int sum = 0, mult = 1;
 
 	while (number >= 1) {
@@ -192,8 +183,8 @@ public class Main {
 	}
 
 	if ((sum % 2 == 0) && (mult % 2 == 0))
-	    return true;
-
-	return false;
+	    System.out.println("Это дважды чётное число");
+	else
+	    System.out.println("Это не дважды чётное число");
     }
 }
