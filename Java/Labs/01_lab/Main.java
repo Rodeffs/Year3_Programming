@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -27,57 +26,28 @@ public class Main {
     
 		System.out.println("Введите " + size + " чисел:");
 
-		for (int i = 0; i < size; i++) {
+		for (int i = 0; i < size; i++) 
 		    numbers[i] = in.nextInt();
-		}
 
 		System.out.println("Сумма ряда: " + row_sum(numbers));
 		break;
 
 	    case 3:
-		System.out.print("Введите координату x клада: ");
-		int x = in.nextInt();
-		System.out.print("Введите координату y клада: ");
-		int y = in.nextInt();
-
-		System.out.println("Минимальное количество указаний: " + find_treasure(x, y));
+		find_treasure();
 		break;
 
 	    case 4:
-		System.out.print("Введите количество дорог: ");
-		int road_count = in.nextInt();
-		
-		ArrayList<ArrayList<Integer>> roads = new ArrayList<ArrayList<Integer>>();
-
-		for (int i = 1; i <= road_count; i++) {
-		    ArrayList<Integer> road = new ArrayList<Integer>();
-
-		    System.out.print("Введите количество туннелей для " + i + " дороги: ");
-		    int tunnel_count = in.nextInt();
-		    System.out.println("Введите высоту каждого туннеля:");
-
-		    for (int j = 0; j < tunnel_count; j++) {
-			road.add(in.nextInt());
-		    }
-
-		    roads.add(road);
-		}
-
-		int[] optimal = max_height(roads);
-		
-		String output = String.format("Оптимальные дорога и высота грузовика: %d %d", optimal[0], optimal[1]);
-		System.out.println(output);
+		find_optimal_path();
 		break;
 
 	    case 5:
 		System.out.print("Введите положительное трёхзначное число: ");
 
-		if (twice_even(in.nextInt())) {
+		if (twice_even(in.nextInt())) 
 		    System.out.println("Это дважды чётное число");
-		}
-		else {
+		else 
 		    System.out.println("Это не дважды чётное число");
-		}
+
 		break;
 
 	    default:
@@ -92,15 +62,12 @@ public class Main {
     static int count = 0;
 
     static void collatz_conjecture(int n) {
-	if (n == 1) {
+	if (n == 1) 
 	    return;
-	}
-	else if (n % 2 == 0) {
+	else if (n % 2 == 0) 
 	    n /= 2;
-	}
-	else {
+	else 
 	    n = 3*n + 1;
-	}
 
 	count++;
 	collatz_conjecture(n);
@@ -129,10 +96,17 @@ public class Main {
 
     // Задание 3
 
-    static int find_treasure(int x_goal, int y_goal) {
+    static void find_treasure() {
+	Scanner in = new Scanner(System.in);
+
+	System.out.print("Введите координату x клада: ");
+	int x_goal = in.nextInt();
+
+	System.out.print("Введите координату y клада: ");
+	int y_goal = in.nextInt();
+
 	int shortest_path = 0, x = 0, y = 0;
 	boolean goal_reached = false;
-	Scanner in = new Scanner(System.in);
 	
 	System.out.println("Введите указания:");
 
@@ -144,69 +118,65 @@ public class Main {
 	// Очевидно, что если выполнение предыдущих указаний уже привело нас к кладу, то дальше их не надо учитывать
 
 	while (!direction.equals("стоп")) {
-	    if ((x == x_goal) && (y == y_goal)) {
+	    if ((x == x_goal) && (y == y_goal)) 
 		goal_reached = true;
-	    }
 	    
 	    // ЗАПОМНИТЬ: в Java оператор == проверяет, что это один и тот же объект, а не одно и то же значение (для этого нужен .equals())
 
-	    if (direction.equals("север")) {
+	    if (direction.equals("север"))
 		y += steps;
-	    }
-	    else if (direction.equals("юг")) {
+	    else if (direction.equals("юг")) 
 		y -= steps;
-	    }
-	    else if (direction.equals("запад")) {
+	    else if (direction.equals("запад")) 
 		x -= steps;
-	    }
-	    else if (direction.equals("восток")) {
+	    else if (direction.equals("восток")) 
 		x += steps;
-	    }
 
-	    if (!goal_reached) {
+	    if (!goal_reached) 
 		shortest_path++;	
-	    }
 
 	    direction = in.next();
 
-	    if (!direction.equals("стоп")) {
+	    if (!direction.equals("стоп")) 
 		steps = in.nextInt();
-	    }
 	}
 	
+	System.out.println("Минимальное количество указаний: " + shortest_path);
 	in.close();
-	return shortest_path;
     }
 
     // Задание 4
+    
+    static void find_optimal_path() {
+	Scanner in = new Scanner(System.in);
 
-    static int find_min(ArrayList<Integer> array) {
-	int min = Integer.MAX_VALUE;
+	System.out.print("Введите количество дорог: ");
+	int road_count = in.nextInt();
 
-	for (int i : array) {
-	    if (i < min) {
-		min = i;
+	int optimal_height = Integer.MIN_VALUE, optimal_road = 0;
+	
+	for (int i = 1; i <= road_count; i++) {
+	    System.out.print("Введите количество туннелей для " + i + " дороги: ");
+	    int tunnel_count = in.nextInt(), min_tunnel = Integer.MAX_VALUE;
+
+	    System.out.println("Введите высоту каждого туннеля:");
+
+	    for (int j = 0; j < tunnel_count; j++) {
+		int current_tunnel = in.nextInt();
+		
+		if (current_tunnel < min_tunnel)
+		    min_tunnel = current_tunnel;
+	    }
+
+	    if (min_tunnel > optimal_height) {
+		optimal_height = min_tunnel;
+		optimal_road = i;
 	    }
 	}
 
-	return min;
-    }
-
-    static int[] max_height(ArrayList<ArrayList<Integer>> roads) {
-	int[] optimal_road = new int[2];
-	int max = Integer.MIN_VALUE;
-
-	for (int i = 0; i < roads.size(); i++) {
-	    int lowest_tunnel = find_min(roads.get(i));
-
-	    if (lowest_tunnel > max) {
-		max = lowest_tunnel;
-		optimal_road[0] = i+1;
-		optimal_road[1] = max;
-	    }
-	}
-
-	return optimal_road;
+	String output = String.format("Оптимальные дорога и высота грузовика: %d %d", optimal_road, optimal_height);
+	System.out.println(output);
+	in.close();
     }
 
     // Задание 5
@@ -221,9 +191,8 @@ public class Main {
 	    number /= 10;
 	}
 
-	if ((sum % 2 == 0) && (mult % 2 == 0)) {
+	if ((sum % 2 == 0) && (mult % 2 == 0))
 	    return true;
-	}
 
 	return false;
     }
