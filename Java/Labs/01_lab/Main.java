@@ -38,23 +38,20 @@ public class Main {
     
     // Задание 1
 
-    static int count = 0;
-
-    static void hailstone_sequence(int n) {
-	if (n == 1) 
-	    return;
-	else if (n % 2 == 0) 
-	    n /= 2;
-	else 
-	    n = 3*n + 1;
-
-	count++;
-	hailstone_sequence(n);
-    }
-
     static void collatz_conjecture() {
 	System.out.print("Введите натуральное число: ");
-	hailstone_sequence(in.nextInt());
+	int n = in.nextInt();
+
+	int count = 0;
+
+	while (n != 1) {
+	    if (n % 2 == 0)
+		n /= 2;
+	    else
+		n = 3*n + 1;
+
+	    count++;
+	}
 
 	System.out.println("Потребовалось " + count + " шагов");
     } 
