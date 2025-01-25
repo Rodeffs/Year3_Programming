@@ -110,10 +110,11 @@ def chord_method(a, b, p):
 # Метод секущих
 
 def secant_method(a, b, p):
-    i = 0
+    i = 1
     epsilon = 10**-p
 
-    x, x_prev = a, b
+    x, x_prev = b, a
+    print(f"i = 0\tx = {format(x_prev, f'.{p+1}f')}")
     print(f"i = {i}\tx = {format(x, f'.{p+1}f')}")
 
     x_next = round(chord_iteration(x, x_prev), p+1)  # т.к. нужен ещё один знак после запятой
@@ -240,6 +241,10 @@ def main():
     print("\nКонечноразностный метод Ньютона:")
     finite_difference_answer = convert_to_output(finite_difference_method(a, b, p), p+1)
     print(f"Решение: x = {finite_difference_answer[0]}\tИтерации: {finite_difference_answer[1]}\tПогрешность: {finite_difference_answer[2]}")
+
+    print("\nМетод Стеффенсена:")
+    steffensen_method_answer = convert_to_output(finite_difference_method(a, b, p), p+1)
+    print(f"Решение: x = {steffensen_method_answer[0]}\tИтерации: {finite_difference_answer[1]}\tПогрешность: {finite_difference_answer[2]}")
 
     print("\nМетод простых итераций:")
     fixed_point_iteration_answer = convert_to_output(fixed_point_iteration_method(a, b, p), p+1)
