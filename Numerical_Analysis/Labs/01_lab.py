@@ -211,7 +211,6 @@ def convert_to_output(answer, p):  # чтобы ничего лишнего не
 def main():
     a = 0  # т.к. нужен положительный корень
     b = 10
-    n = 10
     p = 7  # до какого знака после запятой округлять
 
     print("Функция: 2*exp(-x)-(x+1)^2")    
@@ -219,7 +218,7 @@ def main():
     print(f'Точность: до {p} знака после запятой')
 
     print("\nТаблица значений функции:")
-    print_values_table(a, b, n, p)
+    print_values_table(a, b, 10, p)
 
     print("\nМетод Ньютона:")
     newton_answer = convert_to_output(newton_method(a, b, p), p+1)
@@ -243,7 +242,7 @@ def main():
 
     print("\nВывести график? (y/N)")
     if input() == 'y':
-        plot_function(a, b, n)
+        plot_function(a, b, 300)
 
 
 if __name__ == "__main__":
