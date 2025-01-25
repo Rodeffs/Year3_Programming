@@ -14,8 +14,23 @@ def d2fdx2(x):
     return 2*np.exp(-x)-2
 
 
-def plot_function(a, b, n):
+def error_eval(x, a):
+    # Т.к. производная при x > 0 строго убывает, то min(|f'(x)|) на [a, b] будет в точке a
+    return abs(f(x)/dfdx(a))
 
+
+def print_values_table(a, b, n, p):
+    h = round((b-a)/n, p)  # шаг
+    
+    x = np.arange(a, b, h)
+
+    for i in x:
+        t = format(round(i, p), f'.{p}f')  # добавляет незначащие нули вплоть до p знака после запятой
+        ft = format(round(f(i), p), f'.{p}f')
+        print(f"x = {t} | f(x) = {ft}")
+
+
+def plot_function(a, b, n):
     h = (b-a)/n  # шаг
     
     x = np.arange(a, b, h)
@@ -38,44 +53,77 @@ def plot_function(a, b, n):
     plt.show()
 
 
+# Метод Ньютона
+
 def newton_iteration(x):
     return x - f(x)/dfdx(x)
 
 
 def newton_method(a, b, p):
-
     i = 0
     epsilon = 10**-p
 
     x = a
-
     if dfdx(b)*d2fdx2(b) > 0:
         x = b
     
-    x_next = round(newton_iteration(x), p)
-
+    x_next = round(newton_iteration(x), p+1)  # т.к. нужен ещё один знак после запятой
     while (abs(x_next - x) >= epsilon):
         x = x_next
-        x_next = round(newton_iteration(x), p)
+        x_next = round(newton_iteration(x), p+1)
         i += 1
+    
+    return (x, i, error_eval(x, a))
 
-    return (x, i)
+
+# Метод хорд
+
+def chord_iteration(x, c):
+    return x - f(x)*(c-x)/(f(c)-f(x))
+
+
+def chord_method(a, b, p):
+    i = 0
+    epsilon = 10**-p
+
+    x, c = a, b
+    if dfdx(b)*d2fdx2(b) > 0:
+        x, c = b, a
+    
+    x_next = round(chord_iteration(x, c), p+1)  # т.к. нужен ещё один знак после запятой
+    while (abs(x_next - x) >= epsilon):
+        x = x_next
+        x_next = round(chord_iteration(x, c), p+1)
+        i += 1
+    
+    return (x, i, error_eval(x, a))
+
+
+def convert_to_output(answer, p):  # чтобы ничего лишнего не выводить
+    solution = format(answer[0], f'.{p}f')  # добавляет незначащие нули вплоть до p знака после запятой
+    iter_count = str(answer[1])  
+    error = f'{answer[2]:.1g}'  # округляет вплоть до первого ненулевого знака после запятой
+    return (solution, iter_count, error)
 
 
 def main():
-
     a = 0  # т.к. нужен положительный корень
     b = 10
-    n = 100
-    precision = 7  # до какого знака после запятой округлять
+    n = 10
+    p = 7  # до какого знака после запятой округлять
     
-    # Метод Ньютона
+    newton_answer = convert_to_output(newton_method(a, b, p), p+1)
+    print(f"Метод Ньютона: решение = {newton_answer[0]}, итерации = {newton_answer[1]}, погрешность = {newton_answer[2]}")
 
-    newton_solution = newton_method(a, b, precision)
-    print(f"Метод Ньютона: решение = {newton_solution[0]}, итерации = {newton_solution[1]}")
+    chord_answer = convert_to_output(chord_method(a, b, p), p+1)
+    print(f"Метод Хорд: решение = {chord_answer[0]}, итерации = {chord_answer[1]}, погрешность = {chord_answer[2]}")
     
+    print("Вывести таблицу значений? (y/N)")
+    if input() == 'y':
+        print_values_table(a, b, n, p)
+
     print("Вывести график? (y/N)")
-    if input() is 'y':
+    if input() == 'y':
         plot_function(a, b, n)
 
 
