@@ -14,8 +14,13 @@ def d2fdx2(x):
     return 2*np.exp(-x)-2
 
 
-def error_eval(x, a):  # т.к. производная при x >= 0 строго убывает, то min(|f'(x)|) на [a, b] будет в точке a
-    return abs(f(x)/dfdx(a))
+def error_eval(x, a, b):  # т.к. производная при x >= 0 строго возрастает/убывает, то min(|f'(x)|) на [a, b] будет на концах промежутка
+    der_a, der_b = abs(dfdx(a)), abs(dfdx(b))
+    
+    if der_a < der_b:
+        return abs(f(x))/der_a
+    
+    return abs(f(x))/der_b
 
 
 def print_values_table(a, b, n, p):
@@ -74,7 +79,7 @@ def newton_method(a, b, p):
         i += 1
         print(f"i = {i}\tx = {format(x, f'.{p+1}f')}")
     
-    return (x, i, error_eval(x, a))
+    return (x, i, error_eval(x, a, b))
 
 
 # Метод хорд
@@ -99,7 +104,7 @@ def chord_method(a, b, p):
         i += 1
         print(f"i = {i}\tx = {format(x, f'.{p+1}f')}")
     
-    return (x, i, error_eval(x, a))
+    return (x, i, error_eval(x, a, b))
 
 
 # Метод секущих
@@ -119,7 +124,7 @@ def secant_method(a, b, p):
         i += 1
         print(f"i = {i}\tx = {format(x, f'.{p+1}f')}")
     
-    return (x, i, error_eval(x, a))
+    return (x, i, error_eval(x, a, b))
 
 
 # Конечноразностный метод Ньютона
@@ -143,7 +148,7 @@ def finite_difference_method(a, b, p):
         i += 1
         print(f"i = {i}\tx = {format(x, f'.{p+1}f')}")
     
-    return (x, i, error_eval(x, a))
+    return (x, i, error_eval(x, a, b))
 
 
 # Метод Стеффенсена
@@ -165,7 +170,7 @@ def steffensen_method(a, b, p):
         i += 1
         print(f"i = {i}\tx = {format(x, f'.{p+1}f')}")
     
-    return (x, i, error_eval(x, a))
+    return (x, i, error_eval(x, a, b))
 
 
 # Метод простых итераций
@@ -198,7 +203,7 @@ def fixed_point_iteration_method(a, b, p):
         i += 1
         print(f"i = {i}\tx = {format(x, f'.{p+1}f')}")
     
-    return (x, i, error_eval(x, a))
+    return (x, i, error_eval(x, a, b))
 
 
 def convert_to_output(answer, p):  # чтобы ничего лишнего не выводить
