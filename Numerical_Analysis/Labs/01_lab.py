@@ -112,6 +112,8 @@ def main():
     n = 10
     p = 7  # до какого знака после запятой округлять
     
+    print(f'Промежуток: [{a}, {b}]')
+
     newton_answer = convert_to_output(newton_method(a, b, p), p+1)
     print(f"Метод Ньютона: решение = {newton_answer[0]}, итерации = {newton_answer[1]}, погрешность = {newton_answer[2]}")
 
