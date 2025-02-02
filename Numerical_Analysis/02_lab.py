@@ -131,7 +131,7 @@ def main():
     gauss_method_answer = mat.gauss_method()
     print("\nРешение методом Гаусса с выбором главного элемента:")
     for i in gauss_method_answer:
-        print(i)
+        print(round(i, 2))
 
     print("\nАбсолютная погрешность: " + f"{absolute_error(gauss_method_answer, x_true):.1g}")
     print("\nОтносительная погрешность: " + f"{relative_error(gauss_method_answer, x_true):.1g} %")
