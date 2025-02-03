@@ -4,26 +4,15 @@ from math import sqrt
 class LinearSolve:
 
     def __init__(self, A, b):
-        self._coef = A  # матрица коэффициентов
-        self._mat = A  # будет использоваться в качестве временной при преобразованиях
         self._size = len(A)
+        self._coef = [[0] * self._size for _ in range(self._size)]  # матрица коэффициентов
+        self.copy2d(self._coef, A)
+        self._right = [0] * self._size  # правая часть
+        self.copy(self._right, b)
+        
+        # Чтобы не портить исходные данные, эти матрицы будут применяться при преобразованиях
+        self._mat = A
         self._vec = b
-
-    @property
-    def coef(self):
-        return self._coef
-
-    @coef.setter
-    def coef(self, M):
-        self._coef = M
-
-    @property
-    def vec(self):
-        return self._vec
-
-    @vec.setter
-    def vec(self, V):
-        self._vec = V
 
     def linear_operation(self, i, j, a):  # прибавляет к j строке элементы из i строки, домноженные на a
         for k in range(self._size):
@@ -35,8 +24,26 @@ class LinearSolve:
             self._mat[i][k], self._mat[j][k] = self._mat[j][k], self._mat[i][k]
         self._vec[i], self._vec[j] = self._vec[j], self._vec[i]  # помним про правую часть
 
+    def distance(self, x, y):
+        dist = 0
+
+        for i in range(len(x)):
+            dist += (x[i] - y[i])**2
+
+        return sqrt(dist)
+
+    def copy(self, x, y):  # т.к. питон по умолчанию копирует массивы по ссылки, а не дублирует их
+        for i in range(len(x)):
+            x[i] = y[i]
+
+    def copy2d(self, x, y):
+        for i in range(len(x)):
+            for j in range(len(x[i])):
+                x[i][j] = y[i][j]
+
     def reset(self):  # чтобы не было сомнений, что решение получено разными методами
-        self._mat = self._coef
+        self.copy(self._vec, self._right)
+        self.copy2d(self._mat, self._coef)
 
     def print_mat(self):  # вывести преобразованную матрицу и правую часть
         for i in range(self._size):
@@ -86,9 +93,81 @@ class LinearSolve:
         
         self.reset()
         return x
-    
+
+    def test_convergence(self):  # проверка сходимости
+        for i in range(self._size):
+            diag = abs(self._mat[i][i])
+            sum_row = 0
+
+            for j in range(self._size):
+                if j == i:
+                    continue
+
+                sum_row += abs(self._mat[i][j])
+                
+                if diag <= sum_row:
+                    return False
+        return True
+
     def seidel_method(self):
-        return 0
+        x = [0] * self._size  # начальное приближение
+        epsilon = 10**-20  # произвольная погрешность
+        count = 0
+
+        # Для того, чтобы метод сходился достаточно, что для каждого i значение суммы модулей элементов строки не больше, чем модуль элемента по диагонали
+        # К сожалению, нет какого-то конкретного алгоритма преобразования, чтобы сделать матрицу сходящейся, так что нужно это делать вручную
+
+        if not self.test_convergence():
+            self.print_mat()
+            print("Данная матрица не сходится, необходимо её преобразовать\nДоступные команды:\n1. Поменять местами строки\n2. Линейное преобразование")
+        
+        while not self.test_convergence():
+            operation = input()
+
+            if operation == "1":
+                print("Поменять местами строки i и j\nВводите в порядке: i, j")
+                i = int(input())
+                j = int(input())
+                self.swap_rows(i, j)
+
+            elif operation == "2":
+                print("Прибавить к j строке строку i, домноженную на a\nВводите в порядке: i, j, a")
+                i = int(input())
+                j = int(input())
+                a = float(input())
+                self.linear_operation(i, j, a)
+
+            else:
+                print("Операция не выбрана, прерывание программы")
+                self.reset()
+                return x
+
+            self.print_mat()
+
+        print("\nПреобразованная матрица:")
+        self.print_mat()
+
+        x_next = [0] * self._size
+
+        while (self.distance(x, x_next) >= epsilon or count == 0):  # нужно чтобы хотя бы один раз выполнилось
+            self.copy(x, x_next)
+
+            for i in range(self._size):
+                x_next[i] = self._vec[i]
+
+                for j in range(i):
+                    x_next[i] -= self._mat[i][j]*x_next[j]
+
+                for j in range(i+1, self._size):
+                    x_next[i] -= self._mat[i][j]*x[j]
+
+                x_next[i] /= self._mat[i][i]
+            
+            count += 1
+
+        print("\nДля метода Зейделя понадобилось {} итераций".format(count))
+        self.reset()
+        return x
 
 
 def absolute_error(x, x_true):  # абсолютная погрешность
@@ -136,6 +215,10 @@ def main():
     print("\nАбсолютная погрешность: " + f"{absolute_error(gauss_method_answer, x_true):.1g}")
     print("\nОтносительная погрешность: " + f"{relative_error(gauss_method_answer, x_true):.1g} %")
 
-    
+    seidel_method_answer = mat.seidel_method()
+    print("\nРешение методом Зейделя:")
+    for i in seidel_method_answer:
+        print(round(i, 2))
+
 if __name__ == "__main__":
     main()
