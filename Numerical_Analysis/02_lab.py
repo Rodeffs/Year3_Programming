@@ -16,8 +16,8 @@ class LinearSolve:
 
     def linear_operation(self, i, j, a):  # прибавляет к j строке элементы из i строки, домноженные на a
         for k in range(self._size):
-            self._mat[j][k] += self._mat[i][k]*a
-        self._vec[j] += self._vec[i]*a  # помним про правую часть
+            self._mat[j][k] = round(self._mat[j][k] + self._mat[i][k]*a, 2)
+        self._vec[j] = round(self._vec[j] + self._vec[i]*a, 2)  # помним про правую часть
 
     def swap_rows(self, i, j):  # меняем местами i и j строки
         for k in range(self._size):
@@ -49,8 +49,8 @@ class LinearSolve:
         for i in range(self._size):
             output = ""
             for j in range(self._size):
-                output += str(round(self._mat[i][j], 2)) + "\t"
-            output += str(round(self._vec[i], 2))
+                output += str(self._mat[i][j]) + "\t"
+            output += str(self._vec[i])
             print(output)
 
     def gauss_method(self):
@@ -89,7 +89,7 @@ class LinearSolve:
             for j in range(i+1, self._size):
                 x[i] -= self._mat[i][j]*x[j]
 
-            x[i] /= self._mat[i][i]
+            x[i] = round(x[i] / self._mat[i][i], 2)
         
         self.reset()
         return x
@@ -111,7 +111,7 @@ class LinearSolve:
 
     def seidel_method(self):
         x = [0] * self._size  # начальное приближение
-        epsilon = 10**-20  # произвольная погрешность
+        epsilon = 10**-7  # произвольная погрешность
         count = 0
 
         # Для того, чтобы метод сходился достаточно, что для каждого i значение суммы модулей элементов строки не больше, чем модуль элемента по диагонали
@@ -165,7 +165,7 @@ class LinearSolve:
             
             count += 1
 
-        print("\nДля метода Зейделя понадобилось {} итераций".format(count))
+        print("\nКоличество итераций для метода Зейделя:", count)
         self.reset()
         return x
 
@@ -210,7 +210,7 @@ def main():
     gauss_method_answer = mat.gauss_method()
     print("\nРешение методом Гаусса с выбором главного элемента:")
     for i in gauss_method_answer:
-        print(round(i, 2))
+        print(i)
 
     print("\nАбсолютная погрешность: " + f"{absolute_error(gauss_method_answer, x_true):.1g}")
     print("\nОтносительная погрешность: " + f"{relative_error(gauss_method_answer, x_true):.1g} %")
@@ -218,7 +218,7 @@ def main():
     seidel_method_answer = mat.seidel_method()
     print("\nРешение методом Зейделя:")
     for i in seidel_method_answer:
-        print(round(i, 2))
+        print(i)
 
 if __name__ == "__main__":
     main()
