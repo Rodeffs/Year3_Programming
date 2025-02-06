@@ -1,10 +1,11 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
 from argparse import ArgumentParser
 
 
-def coef(data, swap):  # нахождение коэффициентов регрессионной прямой через SSE
+def coef(data, swap):  # нахождение коэффициентов регрессионной прямой
     sum_x, sum_y, sum_xy, sum_x2 = 0, 0, 0, 0
     N = len(data)
 
@@ -61,10 +62,27 @@ def main():
     if args.swap:  # т.к. по условию можно выбрать что будет x, а что - y
         X, Y = Y, X
         values = transposed[1]
+
+    # Графики
      
     data.plot(x=X, y=Y, kind="scatter", color="#FF0000")  # точки
-    plt.plot(values, f(values, a, b), color="#0000FF")  # регрессионная прямая
 
+    ax = plt.subplot()
+
+    ax.plot(values, f(values, a, b), color="#0000FF")  # регрессионная прямая
+
+    for i in range(len(values)):  # квадраты ошибок
+        x = values[i]
+        y = transposed[1][i]
+
+        if args.swap:
+            y = transposed[0][i]
+        
+        fx = f(x, a, b)
+        side = abs(y - fx)
+
+        ax.add_patch(Rectangle((x, min(y, fx)), side, side, edgecolor="#DD0000FF", facecolor="#DD0000AA"))
+    
     plt.show()
 
 
