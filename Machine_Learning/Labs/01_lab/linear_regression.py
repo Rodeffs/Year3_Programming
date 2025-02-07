@@ -34,11 +34,11 @@ def main():
     # Считывание параметров
 
     parser = ArgumentParser()
-    parser.add_argument("-o", "--open", required=True, help="the csv file to open")
+    parser.add_argument("-i", "--input", required=True, help="the csv file to open")
     parser.add_argument("-s", "--swap", action="store_true", help="swap columns used for axis, default: first column - x, second column - y")
     args = parser.parse_args()
 
-    data = pd.read_csv(args.open)
+    data = pd.read_csv(args.input)
     
     # Вывод статистики
 
