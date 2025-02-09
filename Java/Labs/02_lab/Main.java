@@ -211,8 +211,6 @@ public class Main {
 	System.out.println("Исходный массив:");
 	print_2d_arr(arr2d2);
 
-	System.out.println();
-
 	System.out.println("Сумма всех его элементов:\n" + sum_2d_array(arr2d2));
 
 	System.out.println("\nЗадание 7:\n");
