@@ -99,6 +99,17 @@ public class Main {
 	return rotated_array;
     }
 
+    static int[] target_pair_sum(int[] arr, int target) {
+	for (int i = 0; i < arr.length-1; i++) 
+	    for (int j = i+1; j < arr.length; j++) 
+		if (arr[i] + arr[j] == target) {
+		    int[] pair = { arr[i], arr[j] };
+		    return pair;
+		}
+
+	return null;	
+    }
+
     static int[][] rotate_array_90_counter_clockwise(int[][] arr) {
 	int max_row = arr[0].length, max_column = arr.length;
 	int[][] rotated_array = new int[max_row][max_column];
@@ -152,14 +163,28 @@ public class Main {
 	System.out.println("Массив, повёрнутый на 90 градусов по часовой стрелке:");
 	print_2d_arr(rotated_90_clockwise);
 
+	System.out.println("\nЗадание 5:\n");
+
+	int[] arr4 = { 1, 2, 3, 4 };
+	int target = 6;
+	
+	System.out.println("Исходный массив:\n" + Arrays.toString(arr4));
+	System.out.println("Искомая сумма:\n" + target);
+
+	int[] pair = target_pair_sum(arr4, target);
+
+	if (pair != null)
+	    System.out.println("Искомая пара элементов:\n" + Arrays.toString(pair));
+	else
+	    System.out.println("Искомой пары в массиве нет");
+
 	System.out.println("\nЗадание 8:\n");
 
 	System.out.println("Исходный массив:");
 	print_2d_arr(arr2d);
 
 	int[][] rotated_90_counter_clockwise = rotate_array_90_counter_clockwise(arr2d);
-	System.out.println("Массив, повёрнутый на 90 градусов по часовой стрелке:");
+	System.out.println("Массив, повёрнутый на 90 градусов против часовой стрелки:");
 	print_2d_arr(rotated_90_counter_clockwise);
-
     }
 }
