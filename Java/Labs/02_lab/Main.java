@@ -81,11 +81,38 @@ public class Main {
 	    if (cur_sum > max_sum)
 		max_sum = cur_sum;
 
-	    if (cur_sum <= 0)
+	    if (cur_sum < 0)
 		cur_sum = 0;
 	}
 
 	return max_sum;
+    }
+
+    static int[][] rotate_array_90_clockwise(int[][] arr) {
+	int max_row = arr[0].length, max_column = arr.length;
+	int[][] rotated_array = new int[max_row][max_column];
+
+	for (int i = 0; i < max_row; i++) 
+	    for (int j = 0; j < max_column; j++) 
+		rotated_array[i][j] = arr[max_column-j-1][i];
+	    
+	return rotated_array;
+    }
+
+    static int[][] rotate_array_90_counter_clockwise(int[][] arr) {
+	int max_row = arr[0].length, max_column = arr.length;
+	int[][] rotated_array = new int[max_row][max_column];
+
+	for (int i = 0; i < max_row; i++) 
+	    for (int j = 0; j < max_column; j++) 
+		rotated_array[i][j] = arr[j][max_row-i-1];
+	    
+	return rotated_array;
+    }
+
+    static void print_2d_arr(int[][] arr) {
+	for (int i = 0; i < arr.length; i++)
+	    System.out.println(Arrays.toString(arr[i]));
     }
 
     public static void main(String[] args) {
@@ -113,5 +140,26 @@ public class Main {
 	
 	System.out.println("Исходный массив:\n" + Arrays.toString(arr3));
 	System.out.println("Максимальная сумма подмассива:\n" + max_subarray_sum(arr3));
+	
+	System.out.println("\nЗадание 4:\n");
+
+	int[][] arr2d = { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 }, { 10, 11, 12 } };
+	
+	System.out.println("Исходный массив:");
+	print_2d_arr(arr2d);
+
+	int[][] rotated_90_clockwise = rotate_array_90_clockwise(arr2d);
+	System.out.println("Массив, повёрнутый на 90 градусов по часовой стрелке:");
+	print_2d_arr(rotated_90_clockwise);
+
+	System.out.println("\nЗадание 8:\n");
+
+	System.out.println("Исходный массив:");
+	print_2d_arr(arr2d);
+
+	int[][] rotated_90_counter_clockwise = rotate_array_90_counter_clockwise(arr2d);
+	System.out.println("Массив, повёрнутый на 90 градусов по часовой стрелке:");
+	print_2d_arr(rotated_90_counter_clockwise);
+
     }
 }
