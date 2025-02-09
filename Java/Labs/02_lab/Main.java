@@ -71,8 +71,24 @@ public class Main {
 	return output_arr;
     }
     
+    static int max_subarray_sum(int[] arr) {
+	int max_sum = Integer.MIN_VALUE;
+	int cur_sum = 0;
+
+	for (int i = 0; i < arr.length; i++) {
+	    cur_sum += arr[i];
+
+	    if (cur_sum > max_sum)
+		max_sum = cur_sum;
+
+	    if (cur_sum <= 0)
+		cur_sum = 0;
+	}
+
+	return max_sum;
+    }
+
     public static void main(String[] args) {
-	
 	System.out.println("Задание 1:\n");
 
 	String sample_str = "fkdlf3440-0flfkffkffffsklskallkellkpropowhelloabcdefghoeieow010";
@@ -92,5 +108,10 @@ public class Main {
 	System.out.println("Объединённый отсортированный массив:\n" + Arrays.toString(concatenated_arr));
 
 	System.out.println("\nЗадание 3:\n");
+
+	int[] arr3 = { 10, 10, -1, 10 };
+	
+	System.out.println("Исходный массив:\n" + Arrays.toString(arr3));
+	System.out.println("Максимальная сумма подмассива:\n" + max_subarray_sum(arr3));
     }
 }
