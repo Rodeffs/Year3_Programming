@@ -58,15 +58,13 @@ public class Main {
 	    }
 
 	    else if (i >= len1) {
-		for (int k = j; k < len2; k++) 
-		    output_arr[i+k] = arr2[k];
-		break;
+		output_arr[i+j] = arr2[j];
+		j++;
 	    }
 
 	    else {
-		for (int k = i; k < len1; k++) 
-		    output_arr[j+k] = arr1[k];
-		break;
+		output_arr[i+j] = arr1[i];
+		i++;
 	    }
 	}
 
