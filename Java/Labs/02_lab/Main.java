@@ -75,8 +75,8 @@ public class Main {
 	int max_sum = Integer.MIN_VALUE;
 	int cur_sum = 0;
 
-	for (int i = 0; i < arr.length; i++) {
-	    cur_sum += arr[i];
+	for (int i : arr) {
+	    cur_sum += i;
 
 	    if (cur_sum > max_sum)
 		max_sum = cur_sum;
@@ -108,6 +108,32 @@ public class Main {
 		}
 
 	return null;	
+    }
+
+    static int sum_2d_array(int[][] arr) {
+	int sum = 0;
+	
+	for (int i = 0; i < arr.length; i++)
+	    for (int j = 0; j < arr[i].length; j++)
+		sum += arr[i][j];
+
+	return sum;
+    }
+
+    static int[] max_in_rows(int[][] arr) {
+	int[] row_max = new int[arr.length];
+
+	for (int i = 0; i < arr.length; i++) {
+	    int cur_max = Integer.MIN_VALUE;
+
+	    for (int elem : arr[i])
+		if (elem > cur_max) {
+		    cur_max = elem;
+		    row_max[i] = elem;
+		}
+	}
+
+	return row_max;
     }
 
     static int[][] rotate_array_90_counter_clockwise(int[][] arr) {
@@ -177,6 +203,27 @@ public class Main {
 	    System.out.println("Искомая пара элементов:\n" + Arrays.toString(pair));
 	else
 	    System.out.println("Искомой пары в массиве нет");
+
+	System.out.println("\nЗадание 6:\n");
+	
+	int[][] arr2d2 = { {1, 2, 3}, {4, 5, 6, 7, 8}, {9, 10, 11, 12, 13}, {14, 15} };
+
+	System.out.println("Исходный массив:");
+	print_2d_arr(arr2d2);
+
+	System.out.println();
+
+	System.out.println("Сумма всех его элементов:\n" + sum_2d_array(arr2d2));
+
+	System.out.println("\nЗадание 7:\n");
+
+	int[][] arr2d3 = { {192, 2, 201, 70}, {2952, 95943, 0, -102}, {9, 10, -1, 5}};
+
+	System.out.println("Исходный массив:");
+	print_2d_arr(arr2d3);
+
+	int[] row_max = max_in_rows(arr2d3);
+	System.out.println("Максимальные элементы в каждой строке массива:\n" + Arrays.toString(row_max));
 
 	System.out.println("\nЗадание 8:\n");
 
