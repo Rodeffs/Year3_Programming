@@ -41,7 +41,7 @@ public class Main {
 	
 	int i = 0, j = 0;
 
-	while (i+j < output_len-1) {
+	while (i+j < output_len) {
 
 	    if ( (i < len1) && (j < len2) ) {
 		int cur1 = arr1[i], cur2 = arr2[j];
@@ -84,8 +84,8 @@ public class Main {
 
 	System.out.println("\nЗадание 2:\n");
 
-	int[] arr1 = { 0, 1, 2, 3, 4, 5 };
-	int[] arr2 = { 6, 7, 8, 9, 10, 11 };
+	int[] arr1 = { 0, 2, 4, 6, 8, 10 };
+	int[] arr2 = { 1, 3, 5, 7, 9, 11 };
 
 	System.out.println("Отсортированный массив 1:\n" + Arrays.toString(arr1));	
 	System.out.println("Отсортированный массив 2:\n" + Arrays.toString(arr2));
