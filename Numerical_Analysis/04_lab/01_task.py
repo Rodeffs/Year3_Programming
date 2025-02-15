@@ -43,7 +43,7 @@ def absolute_error(y_approx, y):
 
 def main():
     points = [0.10, 0.15, 0.20, 0.25]
-    precision = 4
+    precision = 5
     x = 0.22
 
     print("Данная функия: y = sin(2x)")
