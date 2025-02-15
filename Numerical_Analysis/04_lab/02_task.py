@@ -11,8 +11,15 @@ def d2f(x):
     return 8*cos(4*x)
 
 
-def differentiate(a, b, distance, precision):
-    h = (b-a)/distance
+def first_order_error(h):  # погрешность 1 порядка точности равна max(f''(x))/2! * h^2, где x - точка отрезка [a, b]
+    return 4*h**2
+
+
+def second_order_error(h):  # погрешность 2 порядка точности равна max(f'''(x))/3! * h^3, где x - точка отрезка [a, b]
+    return 32/6*h**3
+
+
+def differentiate(a, b, h, precision):
     x = a
 
     while x <= b:
@@ -38,14 +45,17 @@ def differentiate(a, b, distance, precision):
 
 def main():
     a, b = 0, 1
-    distance = 5
+    h = (b-a)/5
     precision = 4
 
-    print(f"Функция: sin(2x)^2\nОтрезок: [{a}, {b}]\nКоличество узлов: {distance}")
+    print(f"Функция: sin(2x)^2\nОтрезок: [{a}, {b}]\n")
 
     print("\nЗначения производных в узлах отрезка:\n")
     
-    differentiate(a, b, distance, precision)
+    differentiate(a, b, h, precision)
+
+    print("Погрешность 1 порядка точности:", first_order_error(h))
+    print("Погрешность 2 порядка точности:", second_order_error(h))
 
 
 if __name__ == "__main__":
