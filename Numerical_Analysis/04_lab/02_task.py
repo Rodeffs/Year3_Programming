@@ -11,12 +11,12 @@ def d2f(x):
     return 8*cos(4*x)
 
 
-def first_order_error(h):  # погрешность 1 порядка точности равна max(f''(x))/2! * h^2, где x - точка отрезка [a, b]
-    return 4*h**2
+def first_order_error(h):  # погрешность 1 порядка точности равна max(f''(x))/2! * h, где x - точка отрезка [a, b]
+    return 4*h
 
 
-def second_order_error(h):  # погрешность 2 порядка точности равна max(f'''(x))/3! * h^3, где x - точка отрезка [a, b]
-    return 32/6*h**3
+def second_order_error(h):  # погрешность 2 порядка точности равна max(f'''(x))/3! * h^2, где x - точка отрезка [a, b]
+    return 32/6*h**2
 
 
 def differentiate(a, b, h, precision):
