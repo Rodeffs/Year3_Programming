@@ -9,7 +9,7 @@ def d2ydx2(x, y):
     return cos(1+x)-0.5*y**2
 
 
-def copy_array_of_tuples(arr1, arr2):
+def copy_array_of_tuples(arr1, arr2):  # т.к. питон по умолчанию просто ссылку копирует
     arr1.clear()
 
     for component in arr2:
@@ -79,18 +79,17 @@ def main():
 
     print(f"Уравнение 1: y' = 1-sin(x+y)\nУравнение 2: y'' = cos(1+x)-0.5y^2\nОтрезок: [{a}, {b}]\n")
 
-    euler_prev, euler_last = euler_cauchy_method(a, b, precision)
-    
-    print("Решение методом Эйлера-Коши (y1 - предпоследняя итерация, y2 - последняя):")
+    print("Решение методом Эйлера-Коши первого уравнения (y1 - предпоследняя итерация, y2 - последняя):")
     print("x y2 y1 y2-y1")
 
-    for i in range(len(euler_last)):
+    euler_prev, euler_last = euler_cauchy_method(a, b, precision)
+    for i in range(1, len(euler_last)):
         if i % 2 == 0:
             x, y2, y1 = euler_last[i][0], euler_last[i][1], euler_prev[i//2][1]
             print(x, y2, y1, round(y2-y1, precision+1))
         else:
-            x, y2= euler_last[i][0], euler_last[i][1]
-            print(x, y2)
+            x, y2 = euler_last[i][0], euler_last[i][1]
+            print(x, y2, "-", "-")
         
 
 
