@@ -301,7 +301,7 @@ def main():
     print(f"Уравнение 1: y' = 1-sin(x+y)\nУравнение 2: y'' = cos(1+x)-0.5y^2\nОтрезок: [{a}, {b}]\nТочность: 10^-{precision}\ny({a}) = 0, y'({a}) = 1\n")
 
     print("Решение методом Эйлера-Коши первого уравнения (y1 - предпоследняя итерация, y2 - последняя):")
-    print("x y2 y1 |y2-y1|")
+    print("i x y2 y1 |y2-y1|")
 
     euler_prev, euler_last = euler_cauchy_method(a, b, precision)
     for i in range(1, len(euler_last)):
@@ -313,7 +313,7 @@ def main():
             print(i, x, y2, "-", "-")
         
     print("\nРешение методом Рунге-Кутты первого уравнения (y1 - предпоследняя итерация, y2 - последняя):")
-    print("x y2 y1 |y2-y1|")
+    print("i x y2 y1 |y2-y1|")
 
     runge_prev, runge_last = runge_kutta_method(a, b, precision)
     for i in range(1, len(runge_last)):
@@ -325,7 +325,7 @@ def main():
             print(i, x, y2, "-", "-")
 
     print("\nРешение методом Адамса (3 порядок точности) второго уравнения (y1 - предпоследняя итерация, y2 - последняя):")
-    print("x y2 y1 |y2-y1|")
+    print("i x y2 y1 |y2-y1|")
 
     adams3_prev, adams3_last = adams_method_order_3(a, b, precision)
     for i in range(1, len(adams3_last)):
@@ -337,7 +337,7 @@ def main():
             print(i, x, y2, "-", "-")
 
     print("\nРешение методом Адамса (4 порядок точности) второго уравнения (y1 - предпоследняя итерация, y2 - последняя):")
-    print("x y2 y1 |y2-y1|")
+    print("i x y2 y1 |y2-y1|")
 
     adams4_prev, adams4_last = adams_method_order_4(a, b, precision)
     for i in range(1, len(adams4_last)):
