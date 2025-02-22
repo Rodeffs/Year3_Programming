@@ -307,10 +307,10 @@ def main():
     for i in range(1, len(euler_last)):
         if i % 2 == 0:
             x, y2, y1 = euler_last[i][0], euler_last[i][1], euler_prev[i//2][1]
-            print(x, y2, y1, round(abs(y2-y1), precision+1))
+            print(i, x, y2, y1, round(abs(y2-y1), precision+1))
         else:
             x, y2 = euler_last[i][0], euler_last[i][1]
-            print(x, y2, "-", "-")
+            print(i, x, y2, "-", "-")
         
     print("\nРешение методом Рунге-Кутты первого уравнения (y1 - предпоследняя итерация, y2 - последняя):")
     print("x y2 y1 |y2-y1|")
@@ -319,10 +319,10 @@ def main():
     for i in range(1, len(runge_last)):
         if i % 2 == 0:
             x, y2, y1 = runge_last[i][0], runge_last[i][1], runge_prev[i//2][1]
-            print(x, y2, y1, round(abs(y2-y1), precision+1))
+            print(i, x, y2, y1, round(abs(y2-y1), precision+1))
         else:
             x, y2 = runge_last[i][0], runge_last[i][1]
-            print(x, y2, "-", "-")
+            print(i, x, y2, "-", "-")
 
     print("\nРешение методом Адамса (3 порядок точности) второго уравнения (y1 - предпоследняя итерация, y2 - последняя):")
     print("x y2 y1 |y2-y1|")
@@ -331,10 +331,10 @@ def main():
     for i in range(1, len(adams3_last)):
         if i % 2 == 0:
             x, y2, y1 = adams3_last[i][0], adams3_last[i][1], adams3_prev[i//2][1]
-            print(x, y2, y1, round(abs(y2-y1), precision+1))
+            print(i, x, y2, y1, round(abs(y2-y1), precision+1))
         else:
             x, y2 = adams3_last[i][0], adams3_last[i][1]
-            print(x, y2, "-", "-")
+            print(i, x, y2, "-", "-")
 
     print("\nРешение методом Адамса (4 порядок точности) второго уравнения (y1 - предпоследняя итерация, y2 - последняя):")
     print("x y2 y1 |y2-y1|")
@@ -343,10 +343,10 @@ def main():
     for i in range(1, len(adams4_last)):
         if i % 2 == 0:
             x, y2, y1 = adams4_last[i][0], adams4_last[i][1], adams4_prev[i//2][1]
-            print(x, y2, y1, round(abs(y2-y1), precision+1))
+            print(i, x, y2, y1, round(abs(y2-y1), precision+1))
         else:
             x, y2 = adams4_last[i][0], adams4_last[i][1]
-            print(x, y2, "-", "-")
+            print(i, x, y2, "-", "-")
 
 
 if __name__ == "__main__":
