@@ -73,6 +73,61 @@ def euler_cauchy_method(a, b, p):
         copy_array_of_tuples(points, points_2n)
 
 
+def runge_kutta_method(a, b, p):
+    epsilon = 10**-p
+    n = 4
+    h = (b-a)/n
+    
+    points = [(a, 0)]  # решение
+    
+    for i in range(1, n+1):  # первая итерация
+        x_prev, y_prev = points[-1]
+        
+        k1 = dydx(x_prev, y_prev)
+        k2 = dydx(x_prev + h/2, y_prev + h/2*k1)
+        k3 = dydx(x_prev + h/2, y_prev + h/2*k2)
+        k4 = dydx(x_prev + h, y_prev + h*k3)
+        
+        x = x_prev + h
+        y = y_prev + h/6*(k1 + 2*k2 + 2*k3 + k4)
+        y = round(y, p+1)
+
+        points.append((x, y))
+
+    while True:
+        n *= 2
+        h /= 2
+
+        points_2n = [(a, 0)]  # решение с удвоенным разбиением 
+
+        for i in range(1, n+1):  # последующие итерации
+            x_prev, y_prev = points_2n[-1]
+            
+            k1 = dydx(x_prev, y_prev)
+            k2 = dydx(x_prev + h/2, y_prev + h/2*k1)
+            k3 = dydx(x_prev + h/2, y_prev + h/2*k2)
+            k4 = dydx(x_prev + h, y_prev + h*k3)            
+
+            x = x_prev + h
+            y = y_prev + h/6*(k1 + 2*k2 + 2*k3 + k4)
+            y = round(y, p+1)
+
+            points_2n.append((x, y))
+        
+        max_diff = 0
+
+        for i in range(n//2+1):
+            diff = abs(points_2n[i*2][1] - points[i][1])
+
+            if diff > max_diff:
+                max_diff = diff
+        
+        if max_diff < epsilon:
+            return [points, points_2n]  # т.к. нужна ещё предпоследняя итерация
+
+        copy_array_of_tuples(points, points_2n)
+
+
 def main():
     a, b = 0, 0.5
     precision = 3
@@ -91,6 +146,17 @@ def main():
             x, y2 = euler_last[i][0], euler_last[i][1]
             print(x, y2, "-", "-")
         
+    print("\nРешение методом Рунге-Кутты первого уравнения (y1 - предпоследняя итерация, y2 - последняя):")
+    print("x y2 y1 y2-y1")
+
+    runge_prev, runge_last = runge_kutta_method(a, b, precision)
+    for i in range(1, len(runge_last)):
+        if i % 2 == 0:
+            x, y2, y1 = runge_last[i][0], runge_last[i][1], runge_prev[i//2][1]
+            print(x, y2, y1, round(y2-y1, precision+1))
+        else:
+            x, y2 = runge_last[i][0], runge_last[i][1]
+            print(x, y2, "-", "-")
 
 
 if __name__ == "__main__":
