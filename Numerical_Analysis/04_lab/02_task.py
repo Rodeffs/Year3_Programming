@@ -22,39 +22,43 @@ def second_order_error(h):  # погрешность 2 порядка точно
 def differentiate(a, b, h, precision):
     x = a
 
+    print(f"x | f'(x) слева | f'(x) справа | f'(x) центр | f''(x) | f'(x) точно | f''(x) точно")
+
     while x <= b:
+        df_rounded = round(df(x), precision)
+        d2f_rounded = round(d2f(x), precision)
+
         if x == a:
             d_right = round((f(x+h) - f(x)) / h, precision)
-            print(f"x = {x}\nf'(x) слева = -\nf'(x) справа = {d_right}\nf'(x) центр = -\nf''(x) = -\nf'(x) точно = {round(df(x), precision)}\nf''(x) точно = {round(d2f(x), precision)}")
+            print(x, "--", d_right, "--", "--", df_rounded, d2f_rounded)
 
         elif x == b:
             d_left = round((f(x) - f(x-h)) / h, precision)
-            print(f"x = {x}\nf'(x) слева = {d_left}\nf'(x) справа = -\nf'(x) центр = -\nf''(x) = -\nf'(x) точно = {round(df(x), precision)}\nf''(x) точно = {round(d2f(x), precision)}")
+            print(x, d_left, "--", "--", "--", df_rounded, d2f_rounded)
 
         else:
             d_left = round((f(x) - f(x-h)) / h, precision)
             d_right = round((f(x+h) - f(x)) / h, precision)
             d_mid = round((f(x+h) - f(x-h)) / (2*h), precision)
             d2 = round((f(x+h) - 2*f(x) + f(x-h)) / (h**2), precision)
-
-            print(f"x = {x}\nf'(x) слева = {d_left}\nf'(x) справа = {d_right}\nf'(x) центр = {d_mid}\nf''(x) = {d2}\nf'(x) точно = {round(df(x), precision)}\nf''(x) точно = {round(d2f(x), precision)}")
-        
-        print()
-        x += h
+            print(x, d_left, d_right, d_mid, d2, df_rounded, d2f_rounded, round(max(abs(d_left - df_rounded), abs(d_right - df_rounded)), precision))
+         
+        x = round(x+h, precision)
 
 
 def main():
     a, b = 0, 1
-    h = (b-a)/5
     precision = 4
+    n = 5
+    h = (b-a)/n
 
-    print(f"Функция: sin(2x)^2\nОтрезок: [{a}, {b}]\n")
+    print(f"Функция: sin(2x)^2\nОтрезок: [{a}, {b}]\nКол-во точек: {n}\n")
 
-    print("\nЗначения производных в узлах отрезка:\n")
+    print("Значения производных в узлах отрезка:\n")
     
     differentiate(a, b, h, precision)
 
-    print("Погрешность 1 порядка точности:", first_order_error(h))
+    print("\nПогрешность 1 порядка точности:", first_order_error(h))
     print("Погрешность 2 порядка точности:", second_order_error(h))
 
 
