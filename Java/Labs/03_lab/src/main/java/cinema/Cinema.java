@@ -1,0 +1,6 @@
+package cinema;
+
+
+class Cinema {
+
+}
