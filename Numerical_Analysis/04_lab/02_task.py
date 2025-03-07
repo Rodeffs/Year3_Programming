@@ -41,7 +41,7 @@ def differentiate(a, b, h, precision):
             d_right = round((f(x+h) - f(x)) / h, precision)
             d_mid = round((f(x+h) - f(x-h)) / (2*h), precision)
             d2 = round((f(x+h) - 2*f(x) + f(x-h)) / (h**2), precision)
-            print(x, d_left, d_right, d_mid, d2, df_rounded, d2f_rounded, round(max(abs(d_left - df_rounded), abs(d_right - df_rounded)), precision))
+            print(x, d_left, d_right, d_mid, d2, df_rounded, d2f_rounded)
          
         x = round(x+h, precision)
 
