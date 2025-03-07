@@ -1,34 +1,42 @@
 package cinema;
 import java.util.ArrayList;
 
-class Hall {
-    private int number;
+public class Hall {
     private int maxSeatsInRow = 0; // костыль для красивого вывода
     private ArrayList<ArrayList<Seat>> seats = new ArrayList<ArrayList<Seat>>();
+    
+    public Hall() {}
 
-    public Hall(int number) {
-	this.number = number;
+    public Hall(ArrayList<ArrayList<Seat>> seats) {
+	this.setSeats(seats);
     }
 
-    public Hall(int number, ArrayList<ArrayList<Seat>> seats) {
-	this.number = number;
-	this.seats = seats;
-    }
-
-    public int getNumber() {
-	return number;
+    public Hall(Hall otherHall) {  // конструктор копирования
+	this.setSeats(otherHall.getSeats());
     }
 
     public ArrayList<ArrayList<Seat>> getSeats() {
 	return seats;
     }
 
-    public void setNumber(int number) {
-	this.number = number;
-    }
-
     public void setSeats(ArrayList<ArrayList<Seat>> seats) {
-	this.seats = seats;
+	this.resetSeatsData();
+
+	for (var row : seats) {
+	    ArrayList<Seat> newRow = new ArrayList<>();
+
+	    int seatCount = row.size();
+
+	    if (seatCount > maxSeatsInRow)
+		maxSeatsInRow = seatCount;
+
+	    for (var seat : row) {
+		Seat newSeat = new Seat(seat);
+		newRow.add(newSeat);
+	    }
+
+	    this.seats.add(newRow);
+	}
     }
 
     public void addRow(int seatCount) {
@@ -72,8 +80,25 @@ class Hall {
     public String toString() {
 	String output = "";
 	
-	// Место занято - ■
+	// Место занято - ▣
 	// Место свободно - □
+	
+	for (int i = 0; i < seats.size(); i++) {
+	    var row = seats.get(i);  // var is like auto from C
+
+	    int nonexistantSeats = maxSeatsInRow - row.size();
+
+	    for (int j = 0; j < nonexistantSeats/2; j++)
+		output += "  ";
+
+	    for (var seat : row) 
+		output += seat.isOccupied() ? "▣  " : "□ ";
+
+	    for (int j = 0; j < nonexistantSeats - nonexistantSeats/2; j++)
+		output += "  ";
+
+	    output += "\n";
+	}
 
 	return output;
     }

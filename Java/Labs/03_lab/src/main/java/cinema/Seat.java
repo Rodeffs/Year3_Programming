@@ -1,7 +1,17 @@
 package cinema;
 
-class Seat {
+public class Seat {
     boolean occupied = false;
+
+    public Seat() {}
+
+    public Seat(boolean occupied) {
+	this.occupied = occupied;
+    }
+
+    public Seat(Seat otherSeat) {
+	this.occupied = otherSeat.isOccupied();
+    }
 
     public boolean isOccupied() {
 	return occupied;
