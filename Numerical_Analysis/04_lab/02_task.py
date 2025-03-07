@@ -50,7 +50,7 @@ def main():
     a, b = 0, 1
     precision = 4
     n = 5
-    h = (b-a)/n
+    h = round((b-a)/n, precision)
 
     print(f"Функция: sin(2x)^2\nОтрезок: [{a}, {b}]\nКол-во точек: {n}\n")
 
