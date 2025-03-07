@@ -80,7 +80,7 @@ public class Hall {
     public String toString() {
 	String output = "";
 	
-	// Место занято - ▣
+	// Место занято - ■
 	// Место свободно - □
 	
 	for (int i = 0; i < seats.size(); i++) {
@@ -92,7 +92,7 @@ public class Hall {
 		output += "  ";
 
 	    for (var seat : row) 
-		output += seat.isOccupied() ? "▣  " : "□ ";
+		output += seat.isOccupied() ? "■ " : "□ ";
 
 	    for (int j = 0; j < nonexistantSeats - nonexistantSeats/2; j++)
 		output += "  ";

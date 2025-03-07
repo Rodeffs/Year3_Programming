@@ -1,18 +1,30 @@
 package cinema;
 
 public class Screening {
+    Day day;
+    Cinema cinema;
     String movieName;
-    int beginTime;
+    int beginTime;  // время = число в минутах от 00:00
     int endTime;
-    Hall hall;
     int hallNumber;
+    Hall hall;
 
-    public Screening(String movieName, int beginTime, int endTime, Hall hall, int hallNumber) {
+    public Screening(Day day, Cinema cinema, String movieName, int beginTime, int endTime, int hallNumber) {
+	this.day = day;
+	this.cinema = cinema;
 	this.movieName = movieName;
 	this.beginTime = beginTime;
 	this.endTime = endTime;
-	this.hall = new Hall(hall);
 	this.hallNumber = hallNumber;
+	this.hall = new Hall(cinema.getHall(hallNumber));
+    }
+
+    public Day getDay() {
+	return day;
+    }
+
+    public Cinema getCinema() {
+	return cinema;
     }
 
     public String getMovieName() {
@@ -27,12 +39,22 @@ public class Screening {
 	return endTime;
     }
 
+    public int getHallNumber() {
+	return hallNumber;
+    }
+
     public Hall getHall() {
 	return hall;
     }
 
-    public int getHallNumber() {
-	return hallNumber;
+    public void setDay(Day day) {
+	this.day = day;
+    }
+
+    public void setCinema(Cinema cinema, int hallNumber) {
+	this.cinema = cinema;
+	this.hallNumber = hallNumber;
+	this.hall = new Hall(cinema.getHall(hallNumber));
     }
 
     public void setMovieName(String movieName) {
@@ -47,18 +69,22 @@ public class Screening {
 	this.endTime = endTime;
     }
 
-    public void setHall(Hall hall) {
-	this.hall = new Hall(hall);
+    public void setHallNumber(int hallNumber) {
+	this.hallNumber = hallNumber;
+	this.hall = new Hall(cinema.getHall(hallNumber));
     }
-    
+
     @Override
     public String toString() {
 	String output = "";
-
-	output += "Название: " + getMovieName() + "\n";
+	
+	output += "День: " + getDay() + "\n";
+	output += "Кинотеатр: " + getCinema().getName() + "\n";
+	output += "Название фильма: " + getMovieName() + "\n";
 	output += "Время начала: " + getBeginTime() + "\n";
 	output += "Время конца: " + getEndTime() + "\n";
 	output += "Номер зала: " + getHallNumber() + "\n";
+	output += "План зала: " + hall.toString() + "\n";
 
 	return output;
     }

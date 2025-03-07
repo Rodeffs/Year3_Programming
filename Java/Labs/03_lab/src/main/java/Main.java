@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 import cinema.*;
 import login.*;
 
@@ -49,25 +51,20 @@ public class Main {
 
 	hall3_1.addRow(25);
 
-	System.out.println("Зал 1_1");
-	System.out.println(hall1_1.toString() + "\n");
+	ArrayList<Cinema> cinemas = new ArrayList<Cinema>();
 
-	System.out.println("Зал 1_2");
-	System.out.println(hall1_2.toString() + "\n");
+	cinemas.add(cinema1);
+	cinemas.add(cinema2);
+	cinemas.add(cinema3);
 
-	System.out.println("Зал 2_1");
-	System.out.println(hall2_1.toString() + "\n");
+	hall1_1.occupySeat(0, 0);
+	
+	ArrayList<Screening> schedule = new ArrayList<Screening>();
 
-	System.out.println("Зал 2_2");
-	System.out.println(hall2_2.toString() + "\n");
+	schedule.add(new Screening(Day.SATURDAY, cinema1, "Balatro", 0, 120, 0));
+	schedule.add(new Screening(Day.SATURDAY, cinema1, "Terraria", 125, 185, 0));
+	schedule.add(new Screening(Day.SATURDAY, cinema1, "Minecraft", 100, 160, 1));
 
-	System.out.println("Зал 2_3");
-	System.out.println(hall2_3.toString() + "\n");
-
-	System.out.println("Зал 3_1");
-	System.out.println(hall3_1.toString() + "\n");
-
-	Day today = Day.SATURDAY;
 
     }
 }
