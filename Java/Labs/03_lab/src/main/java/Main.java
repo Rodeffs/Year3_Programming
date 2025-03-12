@@ -43,7 +43,7 @@ public class Main {
 	}
 
 	while (true) {
-	    var input = in.nextLine();
+	    var input = in.next();
 
 	    if (input.equals("h") || input.equals("help")) {
 		if (admin.isLoggedIn())
@@ -58,7 +58,7 @@ public class Main {
 
 	    else if (input.equals("c") || input.equals("closest")) {
 		System.out.print("Movie title: ");
-		var title = in.nextLine();
+		var title = in.next();
 
 		System.out.print("Amount of tickets: ");
 		var tickets = in.nextInt();
@@ -66,11 +66,13 @@ public class Main {
 		var closest = User.findClosestScreening(schedule, title, Calendar.getInstance(), tickets);
 
 		if (closest != null) {
-		    System.out.println(closest.toString());
+		    System.out.print(closest.toString());
 		    System.out.print("Make a reservation for this screening? (Y/n): ");
-		    
+		    input = in.next();
+
 		    if (!input.equals("n") && !input.equals("no"))
 			buyingTickets(closest.getHall(), tickets);
+		    System.out.println("Reservation made!");
 		}
 
 		else
@@ -94,11 +96,12 @@ public class Main {
 			System.out.println("Error, there isn't enough free seats");
 
 		    else {
-			System.out.println(schedule.get(num-1).toString());
+			System.out.print(schedule.get(num-1).toString());
 			System.out.print("Make a reservation for this screening? (Y/n): ");
-			
+			input = in.next();
 			if (!input.equals("n") && !input.equals("no"))
 			    buyingTickets(hall, tickets);
+			System.out.println("Reservation made!");
 		    }
 		}
 	    }

@@ -75,7 +75,7 @@ public class Screening {
 	output += "Duration (min): " + getDuration() + "\n";
 	output += "Hall number: " + (1+getHallNumber()) + "\n";
 	output += "Free seats: " + hall.getFreeSeats() + "\n";
-	output += "Hall scheme: " + "\n" + hall.toString() + "\n";
+	output += "Hall scheme: " + "\n" + hall.toString();
 
 	return output;
     }

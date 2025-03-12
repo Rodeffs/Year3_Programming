@@ -106,7 +106,7 @@ abstract class Account {
 	String output = "";
 
 	for (int i = 0; i < schedule.size(); i++)
-	    output += (i+1) + ". " + schedule.get(i).toString() + "\n";
+	    output += (i+1) + ".\n" + schedule.get(i).toString() + "\n";
 
 	return output;
     }
