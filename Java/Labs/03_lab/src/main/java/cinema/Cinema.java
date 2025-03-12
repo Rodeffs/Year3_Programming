@@ -24,4 +24,14 @@ public class Cinema {
     public void setHalls(ArrayList<Hall> halls) {
 	this.halls = halls;
     }
+
+    @Override
+    public String toString() {
+	String output = "";
+
+	for (int i = 0; i < halls.size(); i++)
+	    output += "Hall " + (i+1) + "\n" + halls.get(i).toString() + "\n";
+
+	return output;
+    }
 }

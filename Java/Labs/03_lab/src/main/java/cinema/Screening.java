@@ -46,10 +46,8 @@ public class Screening {
 	this.date = date;
     }
 
-    public void setCinema(Cinema cinema, int hallNumber) {
+    public void setCinema(Cinema cinema) {
 	this.cinema = cinema;
-	this.hallNumber = hallNumber;
-	this.hall = new Hall(cinema.getHalls().get(hallNumber));
     }
 
     public void setMovieName(String movieName) {
@@ -62,7 +60,10 @@ public class Screening {
 
     public void setHallNumber(int hallNumber) {
 	this.hallNumber = hallNumber;
-	this.hall = new Hall(cinema.getHalls().get(hallNumber));
+    }
+
+    public void setHall(Hall hall) {
+	this.hall = new Hall(hall);
     }
 
     @Override

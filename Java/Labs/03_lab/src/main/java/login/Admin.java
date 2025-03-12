@@ -27,17 +27,12 @@ public class Admin extends Account {
 	this.schedule = schedule;
     }
 
-    public void removeCinema(Cinema cinema) {
-	cinemas.remove(cinema);
-	removeScreenings(cinema);
-    }
+    public String cinemasToString() {
+	String output = "";
 
-    public void removeScreenings(Object... params) {
-	var toBeRemoved = findScreenings(schedule, params);
+	for (int i = 0; i < cinemas.size(); i++)
+	    output += (i+1) + ". " + cinemas.get(i).getName() + "\n";
 
-	for (var screening : toBeRemoved)
-	    schedule.remove(screening);
-
-	toBeRemoved.clear();
+	return output;
     }
 }
