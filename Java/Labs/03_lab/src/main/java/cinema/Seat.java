@@ -1,7 +1,7 @@
 package cinema;
 
 public class Seat {
-    boolean occupied = false;
+    private boolean occupied = false;
 
     public Seat() {}
 

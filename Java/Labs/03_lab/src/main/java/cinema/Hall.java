@@ -3,6 +3,8 @@ import java.util.ArrayList;
 
 public class Hall {
     private int maxSeatsInRow = 0; // костыль для красивого вывода
+    private int totalSeats = 0;
+    private int occupiedSeats = 0;
     private ArrayList<ArrayList<Seat>> seats = new ArrayList<ArrayList<Seat>>();
     
     public Hall() {}
@@ -33,6 +35,8 @@ public class Hall {
 	    for (var seat : row) {
 		Seat newSeat = new Seat(seat);
 		newRow.add(newSeat);
+		totalSeats++;
+		occupiedSeats += newSeat.isOccupied() ? 1 : 0;
 	    }
 
 	    this.seats.add(newRow);
@@ -49,7 +53,8 @@ public class Hall {
 	    Seat newSeat = new Seat();
 	    newRow.add(newSeat);
 	}
-
+	
+	totalSeats += seatCount;
 	seats.add(newRow);
     }
 
@@ -59,21 +64,38 @@ public class Hall {
 
     public void occupySeat(int row, int number) {
 	seats.get(row).get(number).occupy();
+	occupiedSeats++;
     }
 
     public void deoccupySeat(int row, int number) {
 	seats.get(row).get(number).deoccupy();
+	occupiedSeats--;
     }
 
     public void freeAllSeats() {
 	for (int i = 0; i < seats.size(); i++) 
 	    for (Seat seat : seats.get(i)) 
 		seat.deoccupy();	
+	occupiedSeats = 0;
     }
 
     public void resetSeatsData() {
 	seats.clear();
 	maxSeatsInRow = 0;
+	totalSeats = 0;
+	occupiedSeats = 0;
+    }
+
+    public int getTotalSeats() {
+	return totalSeats;
+    }
+
+    public int getOccupiedSeats() {
+	return occupiedSeats;
+    }
+
+    public int getFreeSeats() {
+	return totalSeats - occupiedSeats;
     }
     
     @Override

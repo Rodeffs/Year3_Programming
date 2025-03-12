@@ -1,26 +1,25 @@
 package cinema;
+import java.util.Calendar;
 
 public class Screening {
-    Day day;
-    Cinema cinema;
-    String movieName;
-    int beginTime;  // время = число в минутах от 00:00
-    int endTime;
-    int hallNumber;
-    Hall hall;
+    private Calendar date;
+    private Cinema cinema;
+    private String movieName;
+    private int duration;
+    private int hallNumber;
+    private Hall hall;
 
-    public Screening(Day day, Cinema cinema, String movieName, int beginTime, int endTime, int hallNumber) {
-	this.day = day;
+    public Screening(Calendar date, Cinema cinema, String movieName, int duration, int hallNumber) {
+	this.date = date;
 	this.cinema = cinema;
 	this.movieName = movieName;
-	this.beginTime = beginTime;
-	this.endTime = endTime;
+	this.duration = duration;
 	this.hallNumber = hallNumber;
-	this.hall = new Hall(cinema.getHall(hallNumber));
+	this.hall = new Hall(cinema.getHalls().get(hallNumber));  // чтобы не портить исходный план здания
     }
 
-    public Day getDay() {
-	return day;
+    public Calendar getDate() {
+	return date;
     }
 
     public Cinema getCinema() {
@@ -31,12 +30,8 @@ public class Screening {
 	return movieName;
     }
 
-    public int getBeginTime() {
-	return beginTime;
-    }
-
-    public int getEndTime() {
-	return endTime;
+    public int getDuration() {
+	return duration;
     }
 
     public int getHallNumber() {
@@ -47,43 +42,39 @@ public class Screening {
 	return hall;
     }
 
-    public void setDay(Day day) {
-	this.day = day;
+    public void setDate(Calendar date) {
+	this.date = date;
     }
 
     public void setCinema(Cinema cinema, int hallNumber) {
 	this.cinema = cinema;
 	this.hallNumber = hallNumber;
-	this.hall = new Hall(cinema.getHall(hallNumber));
+	this.hall = new Hall(cinema.getHalls().get(hallNumber));
     }
 
     public void setMovieName(String movieName) {
 	this.movieName = movieName;
     }
 
-    public void setBeginTime(int beginTime) {
-	this.beginTime = beginTime;
-    }
-
-    public void setEndTime(int endTime) {
-	this.endTime = endTime;
+    public void setDuration(int duration) {
+	this.duration = duration;
     }
 
     public void setHallNumber(int hallNumber) {
 	this.hallNumber = hallNumber;
-	this.hall = new Hall(cinema.getHall(hallNumber));
+	this.hall = new Hall(cinema.getHalls().get(hallNumber));
     }
 
     @Override
     public String toString() {
 	String output = "";
 	
-	output += "День: " + getDay() + "\n";
+	output += "Дата: " + getDate() + "\n";
 	output += "Кинотеатр: " + getCinema().getName() + "\n";
 	output += "Название фильма: " + getMovieName() + "\n";
-	output += "Время начала: " + getBeginTime() + "\n";
-	output += "Время конца: " + getEndTime() + "\n";
-	output += "Номер зала: " + getHallNumber() + "\n";
+	output += "Длительность (мин): " + getDuration() + "\n";
+	output += "Номер зала: " + (1+getHallNumber()) + "\n";
+	output += "Кол-во свободных мест: " + hall.getFreeSeats() + "\n";
 	output += "План зала: " + hall.toString() + "\n";
 
 	return output;

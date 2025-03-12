@@ -24,18 +24,4 @@ public class Cinema {
     public void setHalls(ArrayList<Hall> halls) {
 	this.halls = halls;
     }
-
-    public Hall addHall() {
-	Hall newHall = new Hall();
-	halls.add(newHall);
-	return newHall;
-    }
-
-    public void removeHall(int hallNumber) {
-	halls.remove(hallNumber);
-    }
-
-    public Hall getHall(int hallNumber) {
-	return halls.get(hallNumber);
-    }
 }
