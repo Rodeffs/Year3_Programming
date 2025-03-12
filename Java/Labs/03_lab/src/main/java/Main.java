@@ -5,14 +5,12 @@ import cinema.*;
 import login.*;
 
 public class Main {
+    static ArrayList<Cinema> cinemas = new ArrayList<Cinema>();
+    static ArrayList<Screening> schedule = new ArrayList<Screening>();
 
-    public static void main(String[] args) {
+    public static void initialize() {
 
-	// Некоторые исходные данные
-	
 	// Кинотеарты
-
-	ArrayList<Cinema> cinemas = new ArrayList<Cinema>();
 
 	Cinema cinema1 = new Cinema("Родина");
 	cinemas.add(cinema1);
@@ -74,8 +72,6 @@ public class Main {
 
 	// Сеансы
 	
-	ArrayList<Screening> schedule = new ArrayList<Screening>();
-	
 	Calendar s1_date = Calendar.getInstance();
 	s1_date.add(Calendar.DATE, 10);
 	Screening s1 = new Screening(s1_date, cinema1, "Balatro", 120, 0);
@@ -100,10 +96,15 @@ public class Main {
 	s5_date.add(Calendar.HOUR, 2);
 	Screening s5 = new Screening(s5_date, cinema1, "Terraria", 100, 0);
 	schedule.add(s5);
+    }
+
+    public static void main(String[] args) {
+
+	initialize();
 
 	Admin admin = new Admin("admin", "12345");
+
 	User user = new User("user", "54321");
 
-	System.out.print(User.scheduleToString(schedule));
     }
 }
