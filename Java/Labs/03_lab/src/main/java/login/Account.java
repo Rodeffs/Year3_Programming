@@ -7,6 +7,7 @@ import cinema.*;
 abstract class Account {
     protected String username;
     protected String password;
+    protected boolean logged = false;
 
     public Account(String username, String password) {
 	this.username = username;
@@ -14,7 +15,16 @@ abstract class Account {
     }
 
     public boolean login(String username, String password) {
-	return (this.username.equals(username) && this.password.equals(password));
+	logged = (this.username.equals(username) && this.password.equals(password));
+	return logged;
+    }
+
+    public boolean isLoggedIn() {
+	return logged;
+    }
+
+    public void logoff() {
+	logged = false;
     }
 
     public String getUsername() {
@@ -33,7 +43,7 @@ abstract class Account {
 	this.password = password;
     }
 
-    public Screening findClosestScreening(ArrayList<Screening> schedule, String movieName, Calendar date, int ticketCount) {
+    public static Screening findClosestScreening(ArrayList<Screening> schedule, String movieName, Calendar date, int ticketCount) {
 	Screening closest = null;
 	long maximumWait = Long.MAX_VALUE;
 
@@ -51,7 +61,7 @@ abstract class Account {
 	return closest;
     }
 
-    public ArrayList<Screening> findScreenings(ArrayList<Screening> schedule, Object... params) {  // вернуть все сеансы с заданными параметрами
+    public static ArrayList<Screening> findScreenings(ArrayList<Screening> schedule, Object... params) {  // вернуть все сеансы с заданными параметрами
 	ArrayList<Screening> query = new ArrayList<Screening>();
 
 	Calendar date = null;
@@ -92,15 +102,11 @@ abstract class Account {
 	return query;
     }
 
-    public void makeReservationForSeat(Screening screening, int row, int seatNumber) {
-	screening.getHall().occupySeat(row, seatNumber);
-    }
-
     public static String scheduleToString(ArrayList<Screening> schedule) {
 	String output = "";
 
-	for (var screening : schedule)
-	    output += screening.toString() + "\n";
+	for (int i = 0; i < schedule.size(); i++)
+	    output += (i+1) + ". " + schedule.get(i).toString() + "\n";
 
 	return output;
     }
