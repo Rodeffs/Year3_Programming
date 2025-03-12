@@ -104,6 +104,6 @@ public class Main {
 	Admin admin = new Admin("admin", "12345");
 	User user = new User("user", "54321");
 
-	System.out.println(User.scheduleToString(schedule));
+	System.out.print(User.scheduleToString(schedule));
     }
 }

@@ -69,13 +69,13 @@ public class Screening {
     public String toString() {
 	String output = "";
 	
-	output += "Дата: " + getDate() + "\n";
+	output += "Дата: " + getDate().getTime() + "\n";
 	output += "Кинотеатр: " + getCinema().getName() + "\n";
 	output += "Название фильма: " + getMovieName() + "\n";
 	output += "Длительность (мин): " + getDuration() + "\n";
 	output += "Номер зала: " + (1+getHallNumber()) + "\n";
 	output += "Кол-во свободных мест: " + hall.getFreeSeats() + "\n";
-	output += "План зала: " + hall.toString() + "\n";
+	output += "План зала: " + "\n" + hall.toString() + "\n";
 
 	return output;
     }
