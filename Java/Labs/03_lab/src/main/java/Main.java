@@ -50,10 +50,10 @@ public class Main {
 	    var input = in.next();
 
 	    if (input.equals("h")) 
-		System.out.println("Commands:\n'h' - print this message\n's' - print the full screenings schedule\n'pc' - print the list of cinemas\n'c' - reserve for the closest screening\n'r' - make a reservation by manually selecting a screening\n'q' - quit the program\n\nAdmin commands:\n'ac' - add cinema\n'ec' - edit cinema\n'rc' - remove cinema\n'as' - add screening to schedule\n'es' - edit schedule\n'rs' - remove screening from schedule");
+		System.out.println("Commands:\n'h' - print this message\n's' - print the full screenings schedule\n'pc' - print the list of cinemas\n'c' - print the closest screening\n'r' - make a reservation\n'q' - quit the program\n\nAdmin commands:\n'ac' - add cinema\n'ec' - edit cinema\n'rc' - remove cinema\n'as' - add screening to schedule\n'es' - edit schedule\n'rs' - remove screening from schedule");
 
 	    else if (input.equals("pc")) 
-		System.out.println(admin.cinemasToString());
+		System.out.println(user.cinemasToString());
 
 	    else if (input.equals("ac") && user.isAdmin()) {
 		System.out.print("Enter the name of the new cinema: ");
@@ -224,6 +224,8 @@ public class Main {
 
 		    if (user.makeReservationForClosest(title, Calendar.getInstance(), tickets) < 0)
 			System.out.println("Error, no matching screenings were found");
+		    else
+			System.out.println("Reservation made");
 		    }
 
 		else if (input.equals("2")) {
@@ -236,6 +238,8 @@ public class Main {
 
 		    if (user.makeReservation(num, tickets) < 0)
 			System.out.println("Error, this screening doesn't exist or doesn't have enough free seats");
+		    else
+			System.out.println("Reservation made");
 		}
 	    }
 

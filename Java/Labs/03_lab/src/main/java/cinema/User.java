@@ -376,8 +376,6 @@ public class User {
 		System.out.println("This seat doesn't exist!");
 	    }
 	}
-
-	in.close();
     }
 
 }
