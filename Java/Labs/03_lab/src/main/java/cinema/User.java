@@ -73,6 +73,15 @@ public class User {
 	logged = false;
     }
 
+    public void reset() {
+	username = "";
+	password = "";
+	admin = false;
+	logged = false;
+	schedule = new ArrayList<Screening>();
+	cinemas = new ArrayList<Cinema>();
+    }
+
     public void giveAdminRights(boolean isAdmin) {
 	this.admin = isAdmin;
     }
