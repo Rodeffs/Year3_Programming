@@ -608,7 +608,6 @@ public class User {
 		break;
 
 	    case OK:
-		System.out.println("Done");
 		break;
 	}
     }
