@@ -55,7 +55,7 @@ public class Main {
 		System.out.println("Commands:\n'h'  - print this message\n'ps' - print the full screenings schedule\n'pc' - print the list of cinemas\n'ph' - print halls for cinema\n'pr' - print specified hall scheme\n'c'  - print the closest screening\n'r'  - make a reservation for the closest screening\n'rm' - make a manual reservation\n'q'  - quit the program\n\nAdmin commands:\n'ac' - add cinema\n'ec' - select cinema for editing\n'rc' - remove cinema\n'as' - add screening to schedule\n'es' - select screening for editing\n'rs' - remove screening from schedule\n\nEdit cinema commands:\n'nn' - new name for cinema\n'ah' - add hall\n'eh' - select hall for editing\n'rh' - remove hall\n\nEdit hall commands:\n'ar' - add row\n'rr' - remove row\n'rsd' - reset seat data\n\nEdit schedule commands:\n'st' - set time & date\n'sch' - set cinema and hall\n'sm' - set movie title\n'sd' - set duration\n'fas' - free all seats\n\nEdit commands are there so you won't have to select the same thing for multiple edits at the same time\nThe drawback is that you will have to first enter an edit command, before actually editing\nFor instance, to add hall to a cinema, first use 'es' to select a cinema and then 'ah' to actually add\n");
 
 	    else if (input.equals("ps"))
-		System.out.println(user.scheduleToString());
+		System.out.print(user.scheduleToString());
 	    
 	    else if (input.equals("pc")) 
 		System.out.println(user.cinemasToString());
