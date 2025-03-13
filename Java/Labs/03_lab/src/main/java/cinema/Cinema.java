@@ -30,7 +30,7 @@ public class Cinema {
 	String output = "";
 
 	for (int i = 0; i < halls.size(); i++)
-	    output += "Hall " + (i+1) + "\n" + halls.get(i).toString() + "\n";
+	    output += "Hall %d\n%s".formatted(i+1, halls.get(i).toString());
 
 	return output;
     }

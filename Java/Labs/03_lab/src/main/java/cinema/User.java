@@ -81,7 +81,7 @@ public class User {
 	String output = "";
 
 	for (int i = 0; i < schedule.size(); i++)
-	    output += "Screening %d.\n%s\n".formatted(i+1, schedule.get(i).toString());
+	    output += "Screening %d\n%s\n".formatted(i+1, schedule.get(i).toString());
 
 	return output;
     }
