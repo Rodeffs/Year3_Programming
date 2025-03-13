@@ -427,6 +427,26 @@ public class User {
 	return ReturnCode.OK;
     }
 
+    private boolean checkOverlap(Screening screening) {
+	var begin = screening.getDate().getTimeInMillis();
+	var end = begin + screening.getDuration()*60000;  // duration = x min = x*60*1000 ms
+
+	var otherScreenings = findScreenings(screening.getCinema(), screening.getHallNumber());
+
+	for (var other : otherScreenings) {
+	    var otherBegin = other.getDate().getTimeInMillis();
+	    var otherEnd = otherBegin + other.getDuration()*60000;
+
+	    if (((otherBegin <= begin) && (begin <= otherEnd)) || /* начинается во время другого */
+		((otherBegin <= end) && (end <= otherEnd)) ||  /* заканичвается во время другого */
+		((begin <= otherBegin) && (otherBegin <= end)))  /* другой начинается во время него */
+	    
+		return true;  // тогда получается сеансы пересекаются во времени, а значит не добавляем новый сеанс
+	}
+
+	return false;
+    }
+
     public ReturnCode addScreening(Calendar date, int cinemaIndex, String title, long duration, int hallIndex) {
 	if (!admin)
 	    return ReturnCode.NO_ACCESS;
@@ -448,21 +468,9 @@ public class User {
 	}
 
 	Screening newScreening = new Screening(date, cinema, title, duration, hallIndex);
-	var begin = date.getTimeInMillis();
-	var end = begin + duration*60000;  // duration = x min = x*60*1000 ms
 
-	var otherScreenings = findScreenings(cinemas.get(cinemaIndex), hallIndex);
-
-	for (var other : otherScreenings) {
-	    var otherBegin = other.getDate().getTimeInMillis();
-	    var otherEnd = otherBegin + other.getDuration()*60000;
-
-	    if (((otherBegin <= begin) && (begin <= otherEnd)) || /* начинается во время другого */
-		((otherBegin <= end) && (end <= otherEnd)) ||  /* заканичвается во время другого */
-		((begin <= otherBegin) && (otherBegin <= end)))  /* другой начинается во время него */
-	    
-		return ReturnCode.SCREENING_OVERLAP;  // тогда получается сеансы пересекаются во времени, а значит не добавляем новый сеанс
-	}
+	if (checkOverlap(newScreening))
+	    return ReturnCode.SCREENING_OVERLAP;
 
 	schedule.add(newScreening);
 	return ReturnCode.OK;
@@ -486,12 +494,25 @@ public class User {
 	if (!admin)
 	    return ReturnCode.NO_ACCESS;
 
+	Screening oldScreening = null;
+
 	try {
-	    schedule.get(screeningIndex).setDate(date);
+	    oldScreening = schedule.get(screeningIndex);
 	}
 	catch (Exception e) {
 	    return ReturnCode.INCORRECT_SCREENING_INDEX;
 	}
+
+	Screening newScreening = new Screening(date, oldScreening.getCinema(), oldScreening.getMovieName(), oldScreening.getDuration(), oldScreening.getHallNumber());
+	newScreening.setHall(oldScreening.getHall());
+	schedule.remove(screeningIndex);  // нужно убрать старое, чтобы оно само с собой не могло пересечься
+
+	if (checkOverlap(newScreening)) {
+	    schedule.add(screeningIndex, oldScreening);
+	    return ReturnCode.SCREENING_OVERLAP;
+	}
+
+	schedule.add(screeningIndex, newScreening);
 
 	return ReturnCode.OK;
     }
@@ -500,11 +521,11 @@ public class User {
 	if (!admin)
 	    return ReturnCode.NO_ACCESS;
 
-	Screening screening = null;
+	Screening oldScreening = null;
 	Cinema cinema = null;
 
 	try {
-	    screening = schedule.get(screeningIndex);
+	    oldScreening = schedule.get(screeningIndex);
 	}
 	catch (Exception e) {
 	    return ReturnCode.INCORRECT_SCREENING_INDEX;
@@ -518,11 +539,15 @@ public class User {
 	}
 	
 	try {
-	    Hall hall = cinema.getHalls().get(hallIndex);
+	    Screening newScreening = new Screening(oldScreening.getDate(), cinema, oldScreening.getMovieName(), oldScreening.getDuration(), hallIndex);
+	    schedule.remove(screeningIndex);
 
-	    screening.setCinema(cinema);
-	    screening.setHall(hall);
-	    screening.setHallNumber(hallIndex);
+	    if (checkOverlap(newScreening)) {
+		schedule.add(screeningIndex, oldScreening);
+		return ReturnCode.SCREENING_OVERLAP;
+	    }
+
+	    schedule.add(screeningIndex, newScreening);
 	}
 	catch (Exception e) {
 	    return ReturnCode.INCORRECT_HALL_INDEX;
@@ -548,13 +573,26 @@ public class User {
     public ReturnCode setScreeningDuration(int screeningIndex, long duration) {
 	if (!admin)
 	    return ReturnCode.NO_ACCESS;
-	
+
+	Screening oldScreening = null;
+
 	try {
-	    schedule.get(screeningIndex).setDuration(duration);
+	    oldScreening = schedule.get(screeningIndex);
 	}
 	catch (Exception e) {
 	    return ReturnCode.INCORRECT_SCREENING_INDEX;
 	}
+
+	Screening newScreening = new Screening(oldScreening.getDate(), oldScreening.getCinema(), oldScreening.getMovieName(), duration, oldScreening.getHallNumber());
+	newScreening.setHall(oldScreening.getHall());
+	schedule.remove(screeningIndex);
+
+	if (checkOverlap(newScreening)) {
+	    schedule.add(screeningIndex, oldScreening);
+	    return ReturnCode.SCREENING_OVERLAP;
+	}
+
+	schedule.add(screeningIndex, newScreening);
 
 	return ReturnCode.OK;
     }
