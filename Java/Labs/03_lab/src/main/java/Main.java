@@ -126,7 +126,7 @@ public class Main {
 	    }
 
 	    else if (input.equals("rc")) {
-		System.out.println("WARNING, schedule will be altered as well! Proceed (y/N)? ");
+		System.out.print("WARNING, schedule will be altered as well! Proceed (y/N)? ");
 		input = in.next();
 
 		if (input.equals("y") || input.equals("Y")) {
@@ -216,7 +216,7 @@ public class Main {
 	    }
 
 	    else if (input.equals("rr")) {
-		System.out.println("WARNING, schedule will be altered as well! Proceed (y/N)? ");
+		System.out.print("WARNING, schedule will be altered as well! Proceed (y/N)? ");
 		input = in.next();
 
 		if (input.equals("y") || input.equals("Y")) {
@@ -227,7 +227,7 @@ public class Main {
 	    }
 
 	    else if (input.equals("rsd")) {
-		System.out.println("WARNING, scheduled seats will be reset! Proceed (y/N)? ");
+		System.out.print("WARNING, scheduled seats will be reset! Proceed (y/N)? ");
 		input = in.next();
 
 		if (input.equals("y") || input.equals("Y"))
@@ -252,7 +252,7 @@ public class Main {
 	    }
 
 	    else if (input.equals("sch")) {
-		System.out.println("WARNING, scheduled seats will be reset! Proceed (y/N)? ");
+		System.out.print("WARNING, scheduled seats will be reset! Proceed (y/N)? ");
 		input = in.next();
 
 		if (input.equals("y") || input.equals("Y")) {
