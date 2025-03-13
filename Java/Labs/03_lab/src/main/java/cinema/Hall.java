@@ -61,6 +61,11 @@ public class Hall {
 	seats.add(newRow);
     }
 
+    public void addRows(int[] seatsPerRow) {
+	for (var seatCount : seatsPerRow)
+	    addRow(seatCount);
+    }
+
     public boolean isSeatOccupied(int row, int number) {
 	return seats.get(row).get(number).isOccupied();
     }

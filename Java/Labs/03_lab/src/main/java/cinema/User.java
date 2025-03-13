@@ -286,9 +286,7 @@ public class User {
 	    return ReturnCode.NO_ACCESS;  // можно было заморочиться с enum Class, но для этой лабы достаточно просто int
 
 	Hall hall = new Hall();
-
-	for (var seatCount : seatsPerRow)
-	    hall.addRow(seatCount);
+	hall.addRows(seatsPerRow);
 
 	try {
 	    cinemas.get(cinemaIndex).getHalls().add(hall);
@@ -335,7 +333,7 @@ public class User {
 	return ReturnCode.OK;
     }
 
-    public ReturnCode addRowToHall(int cinemaIndex, int hallIndex, int seatCount) {
+    public ReturnCode addRowsToHall(int cinemaIndex, int hallIndex, int[] seatsPerRow) {
 	if (!admin)
 	    return ReturnCode.NO_ACCESS;
 
@@ -349,12 +347,12 @@ public class User {
 	}
 	
 	try {
-	    cinema.getHalls().get(hallIndex).addRow(seatCount);
+	    cinema.getHalls().get(hallIndex).addRows(seatsPerRow);
 
 	    var seatsToBeAdded = findScreenings(cinema, hallIndex);
 
 	    for (var screening : seatsToBeAdded)
-		screening.getHall().addRow(seatCount);
+		screening.getHall().addRows(seatsPerRow);
 	}
 	catch (Exception e) {
 	    return ReturnCode.INCORRECT_HALL_INDEX;
