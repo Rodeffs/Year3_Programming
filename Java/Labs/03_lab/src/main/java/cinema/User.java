@@ -576,35 +576,35 @@ public class User {
     public static void errorHandling(ReturnCode commandOutput) {
 	switch (commandOutput) {
 	    case NO_ACCESS:
-		System.out.println("Error, you do not have access to this command");
+		System.out.println("Error, you do not have access to this command. No changes were made");
 		break;
 
 	    case INCORRECT_CINEMA_INDEX:
-		System.out.println("Error, there is not such a cinema");
+		System.out.println("Error, there is not such a cinema. No changes were made");
 		break;
 
 	    case INCORRECT_HALL_INDEX:
-		System.out.println("Error, there is not such a hall in this cinema");
+		System.out.println("Error, there is not such a hall in this cinema. No changes were made");
 		break;
 
 	    case INCORRECT_ROW_INDEX:
-		System.out.println("Error, there is not such a row in this cinema hall");
+		System.out.println("Error, there is not such a row in this cinema hall. No changes were made");
 		break;
 
 	    case INCORRECT_SCREENING_INDEX:
-		System.out.println("Error, there is not such a screening in the schedule");
+		System.out.println("Error, there is not such a screening in the schedule. No changes were made");
 		break;
 
 	    case NOT_ENOUGH_FREE_SEATS:
-		System.out.println("Error, there are not enough free seats in this hall");
+		System.out.println("Error, there are not enough free seats in this hall. No changes were made");
 		break;
 
 	    case NO_CLOSEST_SCREENINGS:
-		System.out.println("Error, no screening matches the input parameters");
+		System.out.println("Error, no screening matches the input parameters. No changes were made");
 		break;
 
 	    case SCREENING_OVERLAP:
-		System.out.println("Error, this time slot is already occupied");
+		System.out.println("Error, this time slot is already occupied. No changes were made");
 		break;
 
 	    case OK:
