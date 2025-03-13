@@ -5,11 +5,11 @@ public class Screening {
     private Calendar date;
     private Cinema cinema;
     private String movieName;
-    private int duration;
+    private long duration;
     private int hallNumber;
     private Hall hall;
 
-    public Screening(Calendar date, Cinema cinema, String movieName, int duration, int hallNumber) {
+    public Screening(Calendar date, Cinema cinema, String movieName, long duration, int hallNumber) {
 	this.date = date;
 	this.cinema = cinema;
 	this.movieName = movieName;
@@ -30,7 +30,7 @@ public class Screening {
 	return movieName;
     }
 
-    public int getDuration() {
+    public long getDuration() {
 	return duration;
     }
 
@@ -54,7 +54,7 @@ public class Screening {
 	this.movieName = movieName;
     }
 
-    public void setDuration(int duration) {
+    public void setDuration(long duration) {
 	this.duration = duration;
     }
 
@@ -68,16 +68,6 @@ public class Screening {
 
     @Override
     public String toString() {
-	String output = "";
-	
-	output += "Date: " + getDate().getTime() + "\n";
-	output += "Cinema: " + getCinema().getName() + "\n";
-	output += "Title: " + getMovieName() + "\n";
-	output += "Duration (min): " + getDuration() + "\n";
-	output += "Hall number: " + (1+getHallNumber()) + "\n";
-	output += "Free seats: " + hall.getFreeSeats() + "\n";
-	output += "Hall scheme: " + "\n" + hall.toString();
-
-	return output;
+	return "Date: %s\nCinema: %s\nTitle: %s\nDuration (min): %d\nHall number: %d\nFree seats: %d\nHall scheme:\n%s".formatted(date.getTime(), cinema.getName(), movieName, duration, 1 + hallNumber, hall.getFreeSeats(), hall.toString());
     }
 }

@@ -77,179 +77,11 @@ public class User {
 	this.admin = isAdmin;
     }
 
-    public int addCinema(String cinemaName) {
-	if (!admin)
-	    return -1;
-
-	Cinema newCinema = new Cinema(cinemaName);
-	cinemas.add(newCinema);
-	return 0;
-    }
-
-    public int newCinemaName(int cinemaIndex, String newName) {
-	if (!admin)
-	    return -1;
-
-	try {
-	    cinemas.get(cinemaIndex).setName(newName);
-	}
-	catch (Exception e) {
-	    return -2;
-	}
-
-	return 0;
-    }
-
-    public int removeCinema(int cinemaIndex) {
-	if (!admin)
-	    return -1;
-
-	try {
-	    var cinema = cinemas.get(cinemaIndex);
-
-	    var toBeRemoved = findScreenings(cinema);
-
-	    for (var screening : toBeRemoved)
-		schedule.remove(screening);
-
-	    cinemas.remove(cinemaIndex);
-	}
-	catch (Exception e) {
-	    return -2;
-	}
-	
-	return 0;
-    }
-
-    public int addHall(int cinemaIndex, int[] seatsPerRow) {
-	if (!admin)
-	    return -1;  // можно было заморочиться с enum Class, но для этой лабы достаточно просто int
-
-	Hall hall = new Hall();
-
-	for (var seatCount : seatsPerRow)
-	    hall.addRow(seatCount);
-	
-	try {
-	    cinemas.get(cinemaIndex).getHalls().add(hall);
-	}
-	catch (Exception e) {
-	    return -2;
-	}
-
-	return 0;
-    }
-
-    public int removeHall(int cinemaIndex, int hallIndex) {
-	if (!admin)
-	    return -1;
-	
-	try {
-	    var cinema = cinemas.get(cinemaIndex);
-	    cinema.getHalls().remove(hallIndex);
-
-	    var toBeChanged = findScreenings(cinema);
-
-	    for (var screening : toBeChanged) {
-		var oldIndex = screening.getHallNumber() - 1;
-
-		if (oldIndex == (hallIndex))
-		    schedule.remove(screening);
-
-		else if (oldIndex > (hallIndex))
-		    screening.setHallNumber(oldIndex);
-	    }
-	}
-	catch (Exception e) {
-	    return -2;
-	}
-
-	return 0;
-    }
-
-    public int addRowToHall(int cinemaIndex, int hallIndex, int seatCount) {
-	if (!admin)
-	    return -1;
-
-	try {
-	    var cinema = cinemas.get(cinemaIndex);
-	    cinema.getHalls().get(hallIndex).addRow(seatCount);
-
-	    var seatsToBeAdded = findScreenings(cinema, hallIndex);
-
-	    for (var screening : seatsToBeAdded)
-		screening.getHall().addRow(seatCount);
-	}
-	catch (Exception e) {
-	    return -2;
-	}
-
-	return 0;
-    }
-
-    public int removeRowFromHall(int cinemaIndex, int hallIndex, int rowIndex) {
-	if (!admin)
-	    return -1;
-
-	try {
-	    var cinema = cinemas.get(cinemaIndex);
-	    cinema.getHalls().get(hallIndex).getSeats().remove(rowIndex);
-
-	    var seatsToBeDeleted = findScreenings(cinema, hallIndex);
-
-	    for (var screening : seatsToBeDeleted)
-		screening.getHall().getSeats().remove(rowIndex);
-	}
-	catch (Exception e) {
-	    return -2;
-	}
-
-	return 0;
-    }
-
-    public int resetSeatsData(int cinemaIndex, int hallIndex) {
-	if (!admin)
-	    return -1;
-
-	try {
-	    var cinema = cinemas.get(cinemaIndex);
-	    cinema.getHalls().get(hallIndex).resetSeatsData();
-
-	    var seatsToBeReset = findScreenings(cinema, hallIndex);
-
-	    for (var screening : seatsToBeReset)
-		screening.getHall().resetSeatsData();
-	}
-	catch (Exception e) {
-	    return -2;
-	}
-
-	return 0;
-    }
-
-    public String cinemaHallScheme(int cinemaIndex) {
-	try {
-	    return cinemas.get(cinemaIndex).toString();
-	}
-	catch (Exception e) {
-	    return "Error, there isn't such a cinema";
-	}
-    }
-
-    public String hallScheme(int cinemaIndex, int hallIndex) {
-	try {
-	    return cinemas.get(cinemaIndex).getHalls().get(hallIndex).toString();
-	}
-	catch (Exception e) {
-	    return "Error, there isn't such a cinema or a hall";
-	}
-    }
-
     public String scheduleToString() {
 	String output = "";
 
 	for (int i = 0; i < schedule.size(); i++)
-	    output += (i+1) + ".\n" + schedule.get(i).toString() + "\n";
+	    output += "Screening %d.\n%s\n".formatted(i+1, schedule.get(i).toString());
 
 	return output;
     }
@@ -258,9 +90,36 @@ public class User {
 	String output = "";
 
 	for (int i = 0; i < cinemas.size(); i++)
-	    output += (i+1) + ". " + cinemas.get(i).getName() + "\n";
+	    output += "Cinema %d - %s\n".formatted(i+1, cinemas.get(i).getName());
 
 	return output;
+    }
+
+    public String cinemaHallScheme(int cinemaIndex) {
+	try {
+	    return cinemas.get(cinemaIndex).toString();
+	}
+	catch (Exception e) {
+	    return "Error, there is not such a cinema";
+	}
+    }
+
+    public String hallScheme(int cinemaIndex, int hallIndex) {
+	Cinema cinema = null;
+	
+	try {
+	    cinema = cinemas.get(cinemaIndex);
+	}
+	catch (Exception e) {
+	    return "Error, there is not such a cinema";
+	}
+
+	try {
+	    return cinema.getHalls().get(hallIndex).toString();
+	}
+	catch (Exception e) {
+	    return "Error, there is not such a hall in this cinema";
+	}
     }
 
     public Screening findClosestScreening(String movieName, Calendar date, int ticketCount) {
@@ -322,30 +181,30 @@ public class User {
 	return query;
     }
 
-    public int makeReservation(int screeningIndex, int ticketCount) {
+    public ReturnCode makeReservationForClosest(String movieName, Calendar date, int ticketCount) {
+	var closest = findClosestScreening(movieName, date, ticketCount);
+
+	if (closest == null)
+	    return ReturnCode.NO_CLOSEST_SCREENINGS;
+
+	buyingTickets(closest.getHall(), ticketCount);
+	return ReturnCode.OK;
+    }
+
+    public ReturnCode makeReservation(int screeningIndex, int ticketCount) {
 	try {
 	    var hall = schedule.get(screeningIndex).getHall();
 
 	    if (ticketCount > hall.getFreeSeats())
-		return -2;
+		return ReturnCode.NOT_ENOUGH_FREE_SEATS;
 
 	    buyingTickets(hall, ticketCount);
 	}
 	catch (Exception e) {
-	    return -2;
+	    return ReturnCode.INCORRECT_SCREENING_INDEX;
 	}
 
-	return 0;
-    }
-
-    public int makeReservationForClosest(String movieName, Calendar date, int ticketCount) {
-	var closest = findClosestScreening(movieName, date, ticketCount);
-
-	if (closest == null)
-	    return -2;
-
-	buyingTickets(closest.getHall(), ticketCount);
-	return 0;
+	return ReturnCode.OK;
     }
 
     private void buyingTickets(Hall hall, int ticketCount) {  // работать с выводом в консоль не лучшая идея вне Main, но пойдёт для этой лабы
@@ -378,4 +237,379 @@ public class User {
 	}
     }
 
+    public ReturnCode addCinema(String cinemaName) {
+	if (!admin)
+	    return ReturnCode.NO_ACCESS;
+
+	Cinema newCinema = new Cinema(cinemaName);
+	cinemas.add(newCinema);
+	return ReturnCode.OK;
+    }
+
+    public ReturnCode removeCinema(int cinemaIndex) {
+	if (!admin)
+	    return ReturnCode.NO_ACCESS;
+
+	try {
+	    var cinema = cinemas.get(cinemaIndex);
+
+	    var toBeRemoved = findScreenings(cinema);
+
+	    for (var screening : toBeRemoved)
+		schedule.remove(screening);
+
+	    cinemas.remove(cinemaIndex);
+	}
+	catch (Exception e) {
+	    return ReturnCode.INCORRECT_CINEMA_INDEX;
+	}
+	
+	return ReturnCode.OK;
+    }
+
+    public ReturnCode newCinemaName(int cinemaIndex, String newName) {
+	if (!admin)
+	    return ReturnCode.NO_ACCESS;
+
+	try {
+	    cinemas.get(cinemaIndex).setName(newName);
+	}
+	catch (Exception e) {
+	    return ReturnCode.INCORRECT_CINEMA_INDEX;
+	}
+
+	return ReturnCode.OK;
+    }
+
+    public ReturnCode addHall(int cinemaIndex, int[] seatsPerRow) {
+	if (!admin)
+	    return ReturnCode.NO_ACCESS;  // можно было заморочиться с enum Class, но для этой лабы достаточно просто int
+
+	Hall hall = new Hall();
+
+	for (var seatCount : seatsPerRow)
+	    hall.addRow(seatCount);
+
+	try {
+	    cinemas.get(cinemaIndex).getHalls().add(hall);
+	}
+	catch (Exception e) {
+	    return ReturnCode.INCORRECT_CINEMA_INDEX;
+	}
+
+	return ReturnCode.OK;
+    }
+
+    public ReturnCode removeHall(int cinemaIndex, int hallIndex) {
+	if (!admin)
+	    return ReturnCode.NO_ACCESS;
+	
+	Cinema cinema = null;
+
+	try {
+	    cinema = cinemas.get(cinemaIndex);
+	}
+	catch (Exception e) {
+	    return ReturnCode.INCORRECT_CINEMA_INDEX;
+	}
+
+	try{
+	    cinema.getHalls().remove(hallIndex);
+
+	    var toBeChanged = findScreenings(cinema);
+
+	    for (var screening : toBeChanged) {
+		var oldIndex = screening.getHallNumber() - 1;
+
+		if (oldIndex == (hallIndex))
+		    schedule.remove(screening);
+
+		else if (oldIndex > (hallIndex))
+		    screening.setHallNumber(oldIndex);
+	    }
+	}
+	catch (Exception e) {
+	    return ReturnCode.INCORRECT_HALL_INDEX;
+	}
+
+	return ReturnCode.OK;
+    }
+
+    public ReturnCode addRowToHall(int cinemaIndex, int hallIndex, int seatCount) {
+	if (!admin)
+	    return ReturnCode.NO_ACCESS;
+
+	Cinema cinema = null;
+
+	try {
+	    cinema = cinemas.get(cinemaIndex);
+	}
+	catch (Exception e) {
+	    return ReturnCode.INCORRECT_CINEMA_INDEX;
+	}
+	
+	try {
+	    cinema.getHalls().get(hallIndex).addRow(seatCount);
+
+	    var seatsToBeAdded = findScreenings(cinema, hallIndex);
+
+	    for (var screening : seatsToBeAdded)
+		screening.getHall().addRow(seatCount);
+	}
+	catch (Exception e) {
+	    return ReturnCode.INCORRECT_HALL_INDEX;
+	}
+
+	return ReturnCode.OK;
+    }
+
+    public ReturnCode removeRowFromHall(int cinemaIndex, int hallIndex, int rowIndex) {
+	if (!admin)
+	    return ReturnCode.NO_ACCESS;
+
+	Cinema cinema = null;
+	Hall hall = null;
+
+	try {
+	    cinema = cinemas.get(cinemaIndex);
+	}
+	catch (Exception e) {
+	    return ReturnCode.INCORRECT_CINEMA_INDEX;
+	}
+
+	try {
+	    hall = cinema.getHalls().get(hallIndex);
+	}
+	catch (Exception e) {
+	    return ReturnCode.INCORRECT_HALL_INDEX;
+	}
+
+	try{
+	    hall.getSeats().remove(rowIndex);
+
+	    var seatsToBeDeleted = findScreenings(cinema, hallIndex);
+
+	    for (var screening : seatsToBeDeleted)
+		screening.getHall().getSeats().remove(rowIndex);
+	}
+	catch (Exception e) {
+	    return ReturnCode.INCORRECT_ROW_INDEX;
+	}
+
+	return ReturnCode.OK;
+    }
+
+    public ReturnCode resetSeatsData(int cinemaIndex, int hallIndex) {
+	if (!admin)
+	    return ReturnCode.NO_ACCESS;
+
+	Cinema cinema = null;
+
+	try {
+	    cinema = cinemas.get(cinemaIndex);
+	}
+	catch (Exception e) {
+	    return ReturnCode.INCORRECT_CINEMA_INDEX;
+	}
+
+	try {
+	    cinema.getHalls().get(hallIndex).resetSeatsData();
+
+	    var seatsToBeReset = findScreenings(cinema, hallIndex);
+
+	    for (var screening : seatsToBeReset)
+		screening.getHall().resetSeatsData();
+	}
+	catch (Exception e) {
+	    return ReturnCode.INCORRECT_HALL_INDEX;
+	}
+
+	return ReturnCode.OK;
+    }
+
+    public ReturnCode addScreening(Calendar date, int cinemaIndex, String title, long duration, int hallIndex) {
+	if (!admin)
+	    return ReturnCode.NO_ACCESS;
+
+	Cinema cinema = null;
+
+	try {
+	    cinema = cinemas.get(cinemaIndex);
+	}
+	catch (Exception e) {
+	    return ReturnCode.INCORRECT_CINEMA_INDEX;
+	}
+
+	try {
+	    cinema.getHalls().get(hallIndex);
+	}
+	catch (Exception e) {
+	    return ReturnCode.INCORRECT_HALL_INDEX;
+	}
+
+	Screening newScreening = new Screening(date, cinema, title, duration, hallIndex);
+	var begin = date.getTimeInMillis();
+	var end = begin + duration*60000;  // duration = x min = x*60*1000 ms
+
+	var otherScreenings = findScreenings(cinemas.get(cinemaIndex), hallIndex);
+
+	for (var other : otherScreenings) {
+	    var otherBegin = other.getDate().getTimeInMillis();
+	    var otherEnd = otherBegin + other.getDuration()*60000;
+
+	    if (((otherBegin <= begin) && (begin <= otherEnd)) || /* начинается во время другого */
+		((otherBegin <= end) && (end <= otherEnd)) ||  /* заканичвается во время другого */
+		((begin <= otherBegin) && (otherBegin <= end)))  /* другой начинается во время него */
+	    
+		return ReturnCode.SCREENING_OVERLAP;  // тогда получается сеансы пересекаются во времени, а значит не добавляем новый сеанс
+	}
+
+	schedule.add(newScreening);
+	return ReturnCode.OK;
+    }
+
+    public ReturnCode removeScreening(int screeningIndex) {
+	if (!admin)
+	    return ReturnCode.NO_ACCESS;
+
+	try {
+	    schedule.remove(screeningIndex);
+	}
+	catch (Exception e) {
+	    return ReturnCode.INCORRECT_SCREENING_INDEX;
+	}
+	
+	return ReturnCode.OK;
+    }
+
+    public ReturnCode setScreeningDate(int screeningIndex, Calendar date) {
+	if (!admin)
+	    return ReturnCode.NO_ACCESS;
+
+	try {
+	    schedule.get(screeningIndex).setDate(date);
+	}
+	catch (Exception e) {
+	    return ReturnCode.INCORRECT_SCREENING_INDEX;
+	}
+
+	return ReturnCode.OK;
+    }
+
+    public ReturnCode setScreeningCinemaHall(int screeningIndex, int cinemaIndex, int hallIndex) {
+	if (!admin)
+	    return ReturnCode.NO_ACCESS;
+
+	Screening screening = null;
+	Cinema cinema = null;
+
+	try {
+	    screening = schedule.get(screeningIndex);
+	}
+	catch (Exception e) {
+	    return ReturnCode.INCORRECT_SCREENING_INDEX;
+	}
+
+	try {
+	    cinema = cinemas.get(cinemaIndex);
+	}
+	catch (Exception e) {
+	    return ReturnCode.INCORRECT_CINEMA_INDEX;
+	}
+	
+	try {
+	    Hall hall = cinema.getHalls().get(hallIndex);
+
+	    screening.setCinema(cinema);
+	    screening.setHall(hall);
+	    screening.setHallNumber(hallIndex);
+	}
+	catch (Exception e) {
+	    return ReturnCode.INCORRECT_HALL_INDEX;
+	}
+
+	return ReturnCode.OK;
+    }
+
+    public ReturnCode setScreeningMovieTitle(int screeningIndex, String title) {
+	if (!admin)
+	    return ReturnCode.NO_ACCESS;
+
+	try {
+	    schedule.get(screeningIndex).setMovieName(title);
+	}
+	catch (Exception e) {
+	    return ReturnCode.INCORRECT_SCREENING_INDEX;
+	}
+	
+	return ReturnCode.OK;
+    }
+
+    public ReturnCode setScreeningDuration(int screeningIndex, long duration) {
+	if (!admin)
+	    return ReturnCode.NO_ACCESS;
+	
+	try {
+	    schedule.get(screeningIndex).setDuration(duration);
+	}
+	catch (Exception e) {
+	    return ReturnCode.INCORRECT_SCREENING_INDEX;
+	}
+
+	return ReturnCode.OK;
+    }
+
+    public ReturnCode screeningFreeAllSeats(int screeningIndex) {
+	if (!admin)
+	    return ReturnCode.NO_ACCESS;
+
+	try {
+	    schedule.get(screeningIndex).getHall().freeAllSeats();
+	}
+	catch (Exception e) {
+	    return ReturnCode.INCORRECT_SCREENING_INDEX;
+	}
+
+	return ReturnCode.OK;
+    }
+
+    public static void errorHandling(ReturnCode commandOutput) {
+	switch (commandOutput) {
+	    case NO_ACCESS:
+		System.out.println("Error, you do not have access to this command");
+		break;
+
+	    case INCORRECT_CINEMA_INDEX:
+		System.out.println("Error, there is not such a cinema");
+		break;
+
+	    case INCORRECT_HALL_INDEX:
+		System.out.println("Error, there is not such a hall in this cinema");
+		break;
+
+	    case INCORRECT_ROW_INDEX:
+		System.out.println("Error, there is not such a row in this cinema hall");
+		break;
+
+	    case INCORRECT_SCREENING_INDEX:
+		System.out.println("Error, there is not such a screening in the schedule");
+		break;
+
+	    case NOT_ENOUGH_FREE_SEATS:
+		System.out.println("Error, there are not enough free seats in this hall");
+		break;
+
+	    case NO_CLOSEST_SCREENINGS:
+		System.out.println("Error, no screening matches the input parameters");
+		break;
+
+	    case SCREENING_OVERLAP:
+		System.out.println("Error, this time slot is already occupied");
+		break;
+
+	    case OK:
+		System.out.println("Done");
+		break;
+	}
+    }
 }
