@@ -14,9 +14,6 @@ public class Main {
 	initialize();
 
 	User admin = new User("admin", "12345", true);
-	admin.setCinemaList(cinemas);
-	admin.setSchedule(schedule);
-
 	User user = new User();
 
 	System.out.println("Please, enter account information");
@@ -32,6 +29,8 @@ public class Main {
 		if (login.equals("admin")) {
 		    if (admin.login(login, password)) {
 			user = admin;
+			user.setCinemaList(cinemas);
+			user.setSchedule(schedule);
 			System.out.println("Logged in as admin. Enter 'h' to list the commands");
 		    }
 
