@@ -3,19 +3,18 @@ import java.util.Calendar;
 import java.util.Scanner;
 
 import cinema.*;
-import login.*;
 
 public class Main {
     static ArrayList<Cinema> cinemas = new ArrayList<Cinema>();
     static ArrayList<Screening> schedule = new ArrayList<Screening>();
-    static Scanner in = new Scanner(System.in);
 
     public static void main(String[] args) {
+	Scanner in = new Scanner(System.in);
+
 	initialize();
 
-	Admin admin = new Admin("admin", "12345");
-	admin.setCinemaList(cinemas);
-	admin.setSchedule(schedule);
+	User admin = new User("admin", "12345", true);
+	User user = new User();
 
 	System.out.println("Please, enter account information");
 	
@@ -28,6 +27,7 @@ public class Main {
 
 	    if (login.equals("admin")) {
 		if (admin.login(login, password)) {
+		    user = admin;
 		    System.out.println("Logged in as admin. Enter 'h' to list the commands");
 		    break;
 		}
@@ -35,210 +35,142 @@ public class Main {
 	    }
 
 	    else {
+		user.setUsername(login);
+		user.setPassword(password);
+		user.login(login, password);
 		System.out.println("Welcome! Enter 'h' to list the commands");
 		break;
 	    }
 	}
 
+	user.setCinemaList(cinemas);
+	user.setSchedule(schedule);
+
 	while (true) {
 	    var input = in.next();
 
-	    if (input.equals("h") || input.equals("help")) {
-		if (admin.isLoggedIn())
-		    System.out.println("Commands:\n'h' or 'help' - print this message\n's' or 'schedule' - print the full screenings schedule\n'c' or 'closest' - reserve for the closest screening\n'r' or 'reserve' - make a reservation by manually selecting a screening\n'ac' - add cinema\n'ec' - edit cinema\n'rc' - remove cinema\n'pc' - print the list of cinemas\n'as' - add screening to schedule\n'es' - edit schedule\n'rs' - remove screening from schedule");
+	    if (input.equals("h")) 
+		System.out.println("Commands:\n'h' - print this message\n's' - print the full screenings schedule\n'pc' - print the list of cinemas\n'c' - reserve for the closest screening\n'r' - make a reservation by manually selecting a screening\n'q' - quit the program\n\nAdmin commands:\n'ac' - add cinema\n'ec' - edit cinema\n'rc' - remove cinema\n'as' - add screening to schedule\n'es' - edit schedule\n'rs' - remove screening from schedule");
 
-		else
-		    System.out.println("Commands:\n'h' or 'help' - print this message\n's' or 'schedule' - print the full screenings schedule\n'c' or 'closest' - reserve for the closest screening\n'r' or 'reserve' - make a reservation by manually selecting a screening");
-	    }
-
-	    else if (input.equals("pc") && admin.isLoggedIn()) 
+	    else if (input.equals("pc")) 
 		System.out.println(admin.cinemasToString());
 
-	    else if (input.equals("ac") && admin.isLoggedIn()) {
+	    else if (input.equals("ac") && user.isAdmin()) {
 		System.out.print("Enter the name of the new cinema: ");
-		var name = in.next();
 
-		Cinema newCinema = new Cinema(name);
-		cinemas.add(newCinema);
+		if (user.addCinema(in.next()) < 0)
+		    System.out.println("Error, there isn't such a cinema");
 	    }
 
-	    else if (input.equals("ec") && admin.isLoggedIn()) {
+	    else if (input.equals("ec") && user.isAdmin()) {
 		System.out.println(admin.cinemasToString());
 
 		System.out.print("Enter the cinema number to be edited");
-		var num = in.nextInt();
+		var cinemaIndex = in.nextInt() - 1;
 
-		if ((num < 1) || (num > cinemas.size()))
-		    System.out.println("Error, there isn't such a cinema");
+		System.out.println("EDITING MODE - CINEMA\nEnter 'h' to list commands");
 
-		else {
-		    var editcin = cinemas.get(num-1);
+		while (true) {
+		    input = in.next();
 
-		    System.out.println("EDITING MODE - CINEMA\nEnter 'h' or 'help' to list commands");
+		    if (input.equals("h"))
+			System.out.println("Options:\n'nn' - new name for cinema\n'ah' - add hall\n'eh - edit hall\n'rh' - remove hall\n'ph' - print halls\n'h' - print this message\n'q' - quit EDITING MODE - CINEMA");
 
-		    while (true) {
+		    else if (input.equals("nn")) {
+			System.out.print("Enter the new name for cinema (schedule will also be updated): ");
+
+			if (user.newCinemaName(cinemaIndex, in.next()) < 0) 
+			    System.out.println("Error, there isn't such a cinema");
+		    }
+
+		    else if (input.equals("ah")) {
+			System.out.print("Enter the amount of rows in the new hall: ");
+			int rows = in.nextInt();
+			int[] seatsPerRow = new int[rows];
+			
+			for (int i = 0; i < rows; i++) {
+			    System.out.print("Enter the amount of seats in row %d: ".formatted(i+1));
+			    seatsPerRow[i] = in.nextInt();
+			}
+
+			if (user.addHall(cinemaIndex, seatsPerRow) < 0) 
+			    System.out.println("Error, there isn't such a cinema");
+		    }
+
+		    else if (input.equals("rh")) {
+			System.out.print("WARNING! Schedule will be also affected. Proceed (y/N)? ");
 			input = in.next();
 
-			if (input.equals("h") || input.equals("help"))
-			    System.out.println("Options:\n'nn' - new name for cinema\n'ah' - add hall\n'eh - edit hall\n'rh' - remove hall\n'ph' - print halls\n'h' or 'help' - print this message\n'q' or 'quit' - quit EDITING MODE - CINEMA");
-
-			else if (input.equals("nn")) {
-			    System.out.print("Enter the new name for cinema (schedule will also be updated): ");
-			    editcin.setName(in.next());
+			if (input.equals("y") || input.equals("Y")) {
+			    System.out.print("Enter the hall number to be removed: ");
+			    if (user.removeHall(cinemaIndex, in.nextInt()-1) < 0)
+				System.out.println("Error, there isn't such a cinema or hall");
 			}
+		    }
 
-			else if (input.equals("ah")) {
-			    System.out.print("Enter the amount of rows in the new hall: ");
-			    var rows = in.nextInt();
+		    else if (input.equals("ph"))
+			System.out.println(user.cinemaHallScheme(cinemaIndex));
 
-			    Hall hall = new Hall();
-			    int i = 1;
+		    else if (input.equals("eh")) {
+			System.out.println(user.cinemaHallScheme(cinemaIndex));
 
-			    while (i <= rows) {
-				System.out.print("Enter the amount of seats in row %d: ".formatted(i+1));
+			System.out.print("Enter the hall number to be edited: ");
+			var hallIndex = in.nextInt() - 1;
 
-				var seatCount = in.nextInt();
+			System.out.println("EDITING MODE - HALL\nEnter 'h' to list commands");
 
-				if (seatCount < 0)
-				    System.out.println("Error, negative amount");
-				else {
-				    hall.addRow(seatCount);
-				    i++;
-				}
-			    }
-
-			    editcin.getHalls().add(hall);
-			}
-
-			else if (input.equals("rh")) {
-			    System.out.print("WARNING! Schedule will be also affected. Proceed (y/N)? ");
-
+			while (true) {    
 			    input = in.next();
 
-			    if (input.equals("y") || input.equals("Y")) {
-				System.out.print("Enter the hall number to be removed: ");
-				var hallnum = in.nextInt();
+			    if (input.equals("h"))
+				System.out.println("Options:\n'ar' - add row\n'rr' - remove row\n'pr' - print hall scheme\n'rsd' - reset seat data\n'h' or 'help' - print this message\n'q' or 'quit' - quit EDITING MODE - HALL");
 
-				if ((hallnum < 1) || (hallnum > editcin.getHalls().size()))
-				    System.out.println("Error, there isn't such a hall");
+			    else if (input.equals("ar")) {
+				System.out.print("Enter the amount of seats in the new row: ");
 
-				else {
-				    editcin.getHalls().remove(hallnum-1);
+				if (user.addRowToHall(cinemaIndex, hallIndex, in.nextInt()) < 0)
+				    System.out.println("Error, there isn't such a cinema or hall");
+			    }
 
-				    var toBeChanged = User.findScreenings(schedule, editcin);
+			    else if (input.equals("rr")) {
+				System.out.println("WARNING, schedule will be altered as well! Proceed (y/N)? ");
+				input = in.next();
 
-				    for (var screening : toBeChanged) {
-					var oldnum = screening.getHallNumber();
-
-					if (oldnum == (hallnum-1))
-					    schedule.remove(screening);
-
-					else if (oldnum > (hallnum-1))
-					    screening.setHallNumber(oldnum-1);
-				    }
+				if (input.equals("y") || input.equals("Y")) {
+				    System.out.println(user.hallScheme(cinemaIndex, hallIndex));
+				    System.out.println("Enter the row number to remove: ");
+				    if (user.removeRowFromHall(cinemaIndex, hallIndex, in.nextInt()-1) < 0)
+					System.out.println("Error, there isn't such a cinema, hall or row");
 				}
 			    }
-			}
 
-			else if (input.equals("ph"))
-			    System.out.println(editcin.toString());
+			    else if (input.equals("pr"))
+				System.out.println(user.hallScheme(cinemaIndex, hallIndex));
 
-			else if (input.equals("eh")) {
-			    System.out.println(editcin.toString());
+			    else if (input.equals("rsd")) {
+				System.out.println("WARNING, scheduled seats will be reset! Proceed (y/N)? ");
+				input = in.next();
 
-			    System.out.print("Enter the hall number to be edited: ");
-			    var hallnum = in.nextInt();
-
-			    if ((hallnum < 1) || (hallnum > editcin.getHalls().size()))
-				System.out.println("Error, there isn't such a hall");
-
-			    else {
-				var edithall = editcin.getHalls().get(hallnum-1);
-
-				System.out.println("EDITING MODE - HALL\nEnter 'h' or 'help' to list commands");
-
-				while (true) {    
-				    input = in.next();
-
-				    if (input.equals("h") || input.equals("help"))
-					System.out.println("Options:\n'ar' - add row\n'rr' - remove row\n'pr' - print hall scheme\n'rsd' - reset seat data\n'h' or 'help' - print this message\n'q' or 'quit' - quit EDITING MODE - HALL");
-
-				    else if (input.equals("ar")) {
-					System.out.print("Enter the amount of seats in the new row: ");
-
-					var seatCount = in.nextInt();
-
-					if (seatCount < 0)
-					    System.out.println("Error, negative amount");
-
-					else {
-					    edithall.addRow(seatCount);
-
-					    var seatsToBeAdded = User.findScreenings(schedule, editcin, hallnum-1);
-
-					    for (var screening : seatsToBeAdded)
-						screening.getHall().addRow(seatCount);
-					}
-				    }
-
-				    else if (input.equals("rr")) {
-					System.out.println("WARNING, scheduled seats will be reset! Proceed (y/N)? ");
-
-					input = in.next();
-
-					if (input.equals("y") || input.equals("Y")) {
-					    System.out.println(edithall.toString());
-					    System.out.println("Enter the row number to remove: ");
-					    var rownum = in.nextInt();
-
-					    try {
-						edithall.getSeats().remove(rownum);
-
-						var seatsToBeReset = User.findScreenings(schedule, editcin, hallnum-1);
-
-						for (var screening : seatsToBeReset)
-						    screening.setHall(edithall);
-					    }
-					    catch (Exception e) {
-						System.out.println("Error, there isn't such a row");
-					    }
-					}
-				    }
-
-				    else if (input.equals("pr"))
-					System.out.println(edithall.toString());
-
-				    else if (input.equals("rsd")) {
-					System.out.println("WARNING, scheduled seats will be reset! Proceed (y/N)? ");
-
-					input = in.next();
-
-					if (input.equals("y") || input.equals("Y")) {
-					    edithall.resetSeatsData();
-
-					    var seatsToBeReset = User.findScreenings(schedule, editcin, hallnum-1);
-
-					    for (var screening : seatsToBeReset)
-						screening.getHall().resetSeatsData();
-					}
-				    }
-
-				    else if (input.equals("q") || input.equals("quit")) {
-					System.out.println("QUITTING EDITING MODE - HALL");
-					break;
-				    }
-
-				    else
-					System.out.println("Error, unknown command. Enter 'h' to list the commands");
-				}
+				if (input.equals("y") || input.equals("Y"))
+				    if (user.resetSeatsData(cinemaIndex, hallIndex) < 0)
+					System.out.println("Error, there isn't such a cinema or hall");
 			    }
+
+			    else if (input.equals("q")) {
+				System.out.println("QUITTING EDITING MODE - HALL");
+				break;
+			    }
+
+			    else
+				System.out.println("Error, unknown command. Enter 'h' to list the commands");
+			}
+		    }
+
+			else if (input.equals("as") && user.isAdmin()) {
+
 			}
 
-			else if (input.equals("as") && admin.isLoggedIn()) {
-
-			}
-
-			else if (input.equals("q") || input.equals("quit")) {
+			else if (input.equals("q")) {
 			    System.out.println("QUITTING EDITING MODE - CINEMA");
 			    break;
 			}
@@ -246,117 +178,75 @@ public class Main {
 			else
 			    System.out.println("Error, unknown command. Enter 'h' to list the commands");
 		    }
+	    }
+
+	    else if (input.equals("rc") && user.isAdmin()) {
+		System.out.println("WARNING, schedule will be altered as well! Proceed (y/N)? ");
+		input = in.next();
+
+		if (input.equals("y") || input.equals("Y")) {
+		    System.out.println(admin.cinemasToString());
+		    System.out.print("Enter the cinema number to remove (will be removed from schedule as well): ");
+		    if (user.removeCinema(in.nextInt()-1) < 0)
+			System.out.println("Error, there isn't such a cinema");
 		}
 	    }
 
-	    else if (input.equals("rc") && admin.isLoggedIn()) {
-		System.out.println(admin.cinemasToString());
+	    else if (input.equals("s"))
+		System.out.println(user.scheduleToString());
 
-		System.out.print("Enter the cinema number to remove (will be removed from schedule as well): ");
-		var num = in.nextInt();
-
-		if ((num < 1) || (num > cinemas.size()))
-		    System.out.println("Error, there isn't such a cinema");
-
-		else {
-		    var toBeRemoved = User.findScreenings(schedule, cinemas.get(num-1));
-
-		    for (var screening : toBeRemoved)
-			schedule.remove(screening);
-
-		    cinemas.remove(num-1);
-		}
-	    }
-
-	    else if (input.equals("s") || input.equals("schedule"))
-		System.out.println(User.scheduleToString(schedule));
-
-	    else if (input.equals("c") || input.equals("closest")) {
+	    else if (input.equals("c")) {
 		System.out.print("Movie title: ");
 		var title = in.next();
 
 		System.out.print("Amount of tickets: ");
 		var tickets = in.nextInt();
 		
-		var closest = User.findClosestScreening(schedule, title, Calendar.getInstance(), tickets);
+		var closest = user.findClosestScreening(title, Calendar.getInstance(), tickets);
 
-		if (closest != null) {
+		if (closest != null) 
 		    System.out.print(closest.toString());
-		    System.out.print("Make a reservation for this screening? (Y/n): ");
-		    input = in.next();
-
-		    if (!input.equals("n") && !input.equals("N"))
-			buyingTickets(closest.getHall(), tickets);
-		    System.out.println("Reservation made!");
-		}
 
 		else
 		    System.out.println("Error, no matching screenings were found");
 	    }
 
-	    else if (input.equals("r") || input.equals("reserve")) {
-		System.out.println(User.scheduleToString(schedule));
+	    else if (input.equals("r")) {
+		System.out.println("Choose (1, 2, 3):\n1. Make a reservation for the closest screening\n2. Make a manual reservation\n3. Return");
+		input = in.next();
 
-		System.out.print("Enter the screening number to make a reservation for: ");
-		var num = in.nextInt();
-		
-		if ((num < 1) || (num > schedule.size()))
-		    System.out.println("Error, this screening doesn't exist");
+		if (input.equals("1")) {
+		    System.out.print("Movie title: ");
+		    var title = in.next();
 
-		else {
 		    System.out.print("Amount of tickets: ");
 		    var tickets = in.nextInt();
 
-		    var hall = schedule.get(num-1).getHall();
-
-		    if (tickets > hall.getFreeSeats())
-			System.out.println("Error, there isn't enough free seats");
-
-		    else {
-			System.out.print(schedule.get(num-1).toString());
-			System.out.print("Make a reservation for this screening? (Y/n): ");
-			input = in.next();
-			if (!input.equals("n") && !input.equals("N"))
-			    buyingTickets(hall, tickets);
-			System.out.println("Reservation made!");
+		    if (user.makeReservationForClosest(title, Calendar.getInstance(), tickets) < 0)
+			System.out.println("Error, no matching screenings were found");
 		    }
+
+		else if (input.equals("2")) {
+		    System.out.println(user.scheduleToString());
+		    System.out.print("Enter the screening number to make a reservation for: ");
+		    var num = in.nextInt()-1;
+
+		    System.out.print("Amount of tickets: ");
+		    var tickets = in.nextInt();
+
+		    if (user.makeReservation(num, tickets) < 0)
+			System.out.println("Error, this screening doesn't exist or doesn't have enough free seats");
 		}
 	    }
 
-	    else if (input.equals("q") || input.equals("quit"))
+	    else if (input.equals("q"))
 		break;
 
 	    else
-		System.out.println("Error, unknown command. Enter 'h' to list the commands");
+		System.out.println("Error, unknown command or you don't have access. Enter 'h' to list the commands");
 	}
-    }
 
-    public static void buyingTickets(Hall hall, int tickets) {
-	int i = 1;
-
-	while (i <= tickets) {
-	    System.out.println(hall.toString());
-	    System.out.println("Choose a seat for person %d:".formatted(i));
-
-	    System.out.print("Row: ");
-	    var row = in.nextInt() - 1;
-	    System.out.print("Seat number: ");
-	    var num = in.nextInt() - 1;
-
-	    try {
-		if (hall.isSeatOccupied(row, num))
-		    System.out.println("This seat is already occupied!");
-
-		else {
-		    hall.occupySeat(row, num);
-		    i++;
-		}
-	    }
-
-	    catch (Exception e){
-		System.out.println("This seat doesn't exist!");
-	    }
-	}
+	in.close();
     }
 
     public static void initialize() {  // исходные данные для тестинга

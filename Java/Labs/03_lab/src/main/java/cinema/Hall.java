@@ -46,6 +46,9 @@ public class Hall {
     public void addRow(int seatCount) {
 	ArrayList<Seat> newRow = new ArrayList<>();
 
+	if (seatCount < 0)
+	    return;
+
 	if (seatCount > maxSeatsInRow)
 	    maxSeatsInRow = seatCount;
 
