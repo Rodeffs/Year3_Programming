@@ -160,18 +160,18 @@ public class User {
 	}
 
 	for (var screening : schedule) {
-	    boolean toAdd = false;
+	    boolean toAdd = true;
 
 	    if (date != null)
 		toAdd = screening.getDate().equals(date);
 
-	    if (cinema != null)
+	    if ((cinema != null) && toAdd)
 		toAdd = screening.getCinema().equals(cinema);
 
-	    if (movieName != null)
+	    if ((movieName != null) && toAdd)
 		toAdd = screening.getMovieName().equals(movieName);
 
-	    if (hallNumber > -1)
+	    if ((hallNumber > -1) && toAdd)
 		toAdd = (screening.getHallNumber() == hallNumber);
 
 	    if (toAdd)
@@ -351,7 +351,7 @@ public class User {
 
 	    var seatsToBeAdded = findScreenings(cinema, hallIndex);
 
-	    for (var screening : seatsToBeAdded)
+	    for (var screening : seatsToBeAdded) 
 		screening.getHall().addRows(seatsPerRow);
 	}
 	catch (Exception e) {
