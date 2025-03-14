@@ -295,7 +295,7 @@ public class Main {
 
 		else
 		    System.out.println("Error, unknown command. Enter 'h' to list the commands");
-		}
+	    }
 	}
 
 	in.close();
