@@ -25,18 +25,18 @@ def lower_right(x0, xmax, tmax, a, h, precision):
     U, X, Y, Z = [], [], [], []
 
     while t <= tmax:
-        Ux = []
-
         # Строим "лесенку", если x0 != 0
         ladder = 0
 
         if x0 < 0:
-            ladder = round(tmax/dt - t, precision)
+            ladder = round((tmax-t)/dt, precision)
 
         elif x0 > 0:
-            ladder = round(min(tmax/dt - t, x0/h), precision)
+            ladder = round(min((tmax-t)/dt, x0/h), precision)
 
-        x = x0 - h*ladder
+        x = round(x0 - h*ladder, precision)
+
+        Ux = [0]*i
 
         while x <= xmax:
             U_next = 0
@@ -65,7 +65,7 @@ def lower_right(x0, xmax, tmax, a, h, precision):
 
         U.append(Ux)
         t = round(t + dt, precision)
-        j += 1
+        j += 1 
         i -= int(abs(xmax-x0)/h + ladder + 1)
 
     return [X, Y, Z]
@@ -78,17 +78,16 @@ def lower_left(x0, xmax, tmax, a, h, precision):
     U, X, Y, Z = [], [], [], []
 
     while t <= tmax:
-        Ux = []
-
         ladder = 0
 
         if xmax > 0:
-            ladder = round(tmax/dt - t, precision)
+            ladder = round((tmax-t)/dt, precision)
 
         elif xmax < 0:
-            ladder = round(min(tmax/dt - t, abs(xmax)/h), precision)
+            ladder = round(min((tmax-t)/dt, abs(xmax)/h), precision)
 
-        x = xmax + h*ladder
+        x = round(xmax + h*ladder, precision)
+        Ux = [0]*i
 
         while x >= x0:
             U_next = 0
@@ -119,7 +118,6 @@ def lower_left(x0, xmax, tmax, a, h, precision):
         t = round(t + dt, precision)
         j += 1
         i -= int(abs(xmax-x0)/h + ladder + 1)
-        print(i)
     
     return [X[::-1], Y, Z]
 
@@ -231,10 +229,10 @@ def main():
     select = input()
 
     if select == "1":
-        plot3d(lower_right(-5, 5, 15, 2, 0.1, 2))
+        plot3d(lower_right(1, 2, 10, 2, 0.1, 2))
 
     elif select == "2":
-        plot3d(lower_left(-5, 5, 15, -2, 0.1, 2))
+        plot3d(lower_left(1, 2, 10, -2, 0.1, 2))
 
     elif select == "3":
         plot3d(lower_right(0, 1, 10, 2, 0.1, 2))
