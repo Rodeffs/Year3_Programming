@@ -113,7 +113,7 @@ def lower_left(x0, xmax, tmax, a, h, precision):
                 Y.append(t)
                 Z.append(U[j][i])
 
-    return [X[::-1], Y, Z]
+    return [X, Y, Z]
 
 
 def upper_right(x0, xmax, tmax, a, h, precision):  # только при x0 >= 0, иначе при t >= 0 нельзя найти
