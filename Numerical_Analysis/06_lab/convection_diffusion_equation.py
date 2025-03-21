@@ -169,7 +169,7 @@ def four_corners(x0, xmax, tmax, a, h, precision):  # можно сделать 
                 U[j][i] = Ux1(t)
 
             else:
-                U[j][i] = U[j-1][i-1] + ((U[j-1][i] - U[j][i-1]) * (1-k) + 2*dt*f(x+h/2)) / (1+k)
+                U[j][i] = U[j-1][i-1] + ((U[j-1][i] - U[j][i-1]) * (1-k) + 2*dt*f(x-h/2)) / (1+k)
 
             if x0 <= x <= xmax:
                 X.append(x)
