@@ -74,10 +74,10 @@ def lower_left(x0, xmax, tmax, a, h, precision):
 
     stair, offset = 0, 0
 
-    if xmax > 0:
+    if xmax > 1:
         stair = height
 
-    elif xmax < 0:
+    elif xmax < 1:
         stair = min(height, (1-xmax)/h)
 
     width = ceil(round(abs(xmax-x0)/h + stair, precision))
@@ -105,7 +105,7 @@ def lower_left(x0, xmax, tmax, a, h, precision):
                 Y.append(t)
                 Z.append(U[j][i])
 
-        if (xmax > 0 or (xmax < 0 and (tmax-t)/dt < (1-xmax)/h)) and offset < stair:
+        if (xmax > 1 or (xmax < 1 and (tmax-t)/dt < (1-xmax)/h)) and offset < stair:
             offset += 1
 
     return [X, Y, Z]
