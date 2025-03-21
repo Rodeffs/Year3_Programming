@@ -116,7 +116,7 @@ def upper_right(x0, xmax, tmax, a, h, precision):  # только при x0 >= 0
     dt = h/a*k
 
     height = ceil(tmax/dt)
-    width = ceil(abs(xmax-x0)/h + x0/h)
+    width = ceil(xmax/h)
 
     U = [[0 for w in range(width+1)] for h in range(height+1)]
     X, Y, Z = [], [], []
@@ -149,13 +149,10 @@ def four_corners(x0, xmax, tmax, a, h, precision):
     k = a*dt/h
 
     height = ceil(tmax/dt)
-    width = 0
+    width = ceil(xmax/h)
 
-    if a > 0:
-        width = ceil(abs(xmax-x0)/h + x0/h)
-
-    else:
-        width = ceil(abs(xmax-x0)/h + (1-xmax)/h)
+    if a < 0:
+        width = ceil((1-x0)/h)
 
 
     U = [[0 for w in range(width+1)] for h in range(height+1)]
