@@ -19,194 +19,174 @@ def Ux1(t):
 
 
 def lower_right(x0, xmax, tmax, a, h, precision):
-    i, j, t = 0, 0, 0
-    dt = h/abs(a)
+    dt = h/a*0.5
     k = a*dt/h
-    U, X, Y, Z = [], [], [], []
 
-    while t <= tmax:
-        # Строим "лесенку", если x0 != 0
-        ladder = 0
+    height = int(round(tmax/dt, precision))
 
-        if x0 < 0:
-            ladder = round((tmax-t)/dt, precision)
+    # Строим "лесенку", если x0 != 0
 
-        elif x0 > 0:
-            ladder = round(min((tmax-t)/dt, x0/h), precision)
+    ladder, offset = 0, 0
 
-        x = round(x0 - h*ladder, precision)
+    if x0 < 0:
+        ladder = height
 
-        Ux = [0]*i
+    elif x0 > 0:
+        ladder = min(height, x0/h)
 
-        while x <= xmax:
-            U_next = 0
+    width = int(round(abs(xmax-x0)/h + ladder, precision))
+
+    U = [[0 for w in range(width+1)] for h in range(height+1)]
+    X, Y, Z = [], [], []
+
+    for j in range(height+1):
+        t = round(j*dt, precision)
+        
+        if (x0 < 0 or (x0 > 0 and (tmax-t)/dt < x0/h)) and offset < ladder:
+            offset += 1
+
+        for i in range(offset, width+1):
+            x = round(x0 - h*(ladder - offset - i), precision)
 
             if t == 0:
-                U_next = Ut0(x)
+                U[j][i] = Ut0(x)
 
-            elif x == 0 and a > 0 and x0 == 0:
-                U_next = Ux0(t)
+            elif x0 == x == 0 and a > 0:
+                U[j][i] = Ux0(t)
 
-            elif x == 1 and a < 0 and x0 == 0:
-                U_next = Ux1(t)
+            elif xmax == x == 1 and a < 0:
+                U[j][i] = Ux1(t)
 
             else:
-                U_next = k*U[j-1][i-1] + (1-k)*U[j-1][i] + dt*f(x)
+                U[j][i] = k*U[j-1][i-1] + (1-k)*U[j-1][i] + dt*f(x)
 
-            Ux.append(U_next)
-
-            if x >= x0:
+            if x0 <= x <= xmax:
                 X.append(x)
                 Y.append(t)
-                Z.append(U_next)
-            
-            x = round(x + h, precision)
-            i += 1
-
-        U.append(Ux)
-        t = round(t + dt, precision)
-        j += 1 
-        i -= int(abs(xmax-x0)/h + ladder + 1)
+                Z.append(U[j][i])
 
     return [X, Y, Z]
             
 
 def lower_left(x0, xmax, tmax, a, h, precision):
-    i, j, t = 0, 0, 0
-    dt = h/abs(a)
+    dt = -h/a*0.5
     k = a*dt/h
-    U, X, Y, Z = [], [], [], []
 
-    while t <= tmax:
-        ladder = 0
+    height = int(round(tmax/dt, precision))
 
-        if xmax > 0:
-            ladder = round((tmax-t)/dt, precision)
+    ladder, offset = 0, 0
 
-        elif xmax < 0:
-            ladder = round(min((tmax-t)/dt, abs(xmax)/h), precision)
+    if xmax > 0:
+        ladder = height
 
-        x = round(xmax + h*ladder, precision)
-        Ux = [0]*i
+    elif xmax < 0:
+        ladder = min(height, -xmax/h)
 
-        while x >= x0:
-            U_next = 0
+    width = int(round(abs(xmax-x0)/h + ladder, precision))
+
+    U = [[0 for w in range(width+1)] for h in range(height+1)]
+    X, Y, Z = [], [], []
+
+    for j in range(height+1):
+        t = round(j*dt, precision)
+        
+        if (xmax > 0 or (xmax < 0 and (tmax-t)/dt < -xmax/h)) and offset < ladder:
+            offset += 1
+
+        for i in range(width-offset, -1, -1):
+            x = round(xmax + h*(ladder - offset - i), precision)
 
             if t == 0:
-                U_next = Ut0(x)
+                U[j][i] = Ut0(x)
 
-            elif x == 0 and a > 0 and x0 == 0:
-                U_next = Ux0(t)
+            elif x0 == x == 0 and a > 0:
+                U[j][i] = Ux0(t)
 
-            elif x == 1 and a < 0 and x0 == 0:
-                U_next = Ux1(t)
+            elif xmax == x == 1 and a < 0:
+                U[j][i] = Ux1(t)
 
             else:
-                U_next = (1+k)*U[j-1][i] - k*U[j-1][i-1] + dt*f(x)
+                U[j][i] = (1+k)*U[j-1][i] - k*U[j-1][i+1] + dt*f(x)
 
-            Ux.append(U_next)
-
-            if x <= xmax:
+            if x0 <= x <= xmax:
                 X.append(x)
                 Y.append(t)
-                Z.append(U_next)
-            
-            x = round(x - h, precision)
-            i += 1
+                Z.append(U[j][i])
 
-        U.append(Ux)
-        t = round(t + dt, precision)
-        j += 1
-        i -= int(abs(xmax-x0)/h + ladder + 1)
-    
     return [X[::-1], Y, Z]
 
 
 def upper_right(x0, xmax, tmax, a, h, precision):  # только при x0 >= 0, иначе при t >= 0 нельзя найти
-    i, j, t = 0, 0, 0
-    dt = h/abs(a)
+    dt = h/a*0.5
     k = a*dt/h
-    U, X, Y, Z = [], [], [], []
 
-    while t <= tmax:
-        Ux = []
-        x = 0
+    height = int(round(tmax/dt, precision))
+    width = int(round(abs(xmax-x0)/h + x0/h, precision))
 
-        while x <= xmax:
-            U_next = 0
+    U = [[0 for w in range(width+1)] for h in range(height+1)]
+    X, Y, Z = [], [], []
+
+    for j in range(height+1):
+        t = round(j*dt, precision)
+        
+        for i in range(width+1):
+            x = round(i*h, precision)
 
             if t == 0:
-                U_next = Ut0(x)
+                U[j][i] = Ut0(x)
 
-            elif x == 0 and a > 0 and x0 == 0:
-                U_next = Ux0(t)
+            elif x0 == x == 0 and a > 0:
+                U[j][i] = Ux0(t)
 
-            elif x == 1 and a < 0 and x0 == 0:
-                U_next = Ux1(t)
+            elif xmax == x == 1 and a < 0:
+                U[j][i] = Ux1(t)
 
             else:
-                U_next = (U[j-1][i] + k*Ux[i-1] + dt*f(x))/(1+k)
+                U[j][i] = (U[j-1][i] + k*U[j][i-1] + dt*f(x))/(1+k)
 
-            Ux.append(U_next)
-
-            if x >= x0:
+            if x0 <= x <= xmax:
                 X.append(x)
                 Y.append(t)
-                Z.append(U_next)
-            
-            x = round(x + h, precision)
-            i += 1
-
-        U.append(Ux)
-        t = round(t + dt, precision)
-        j += 1
-        i = 0
+                Z.append(U[j][i])
 
     return [X, Y, Z]
 
 
 def four_corners(x0, xmax, tmax, a, h, precision):  # можно сделать и для x0 < 0, но по условию не требуется
-    i, j, t = 0, 0, 0
-    dt = h/abs(a)
+    dt = h/abs(a)*0.5
     k = a*dt/h
-    U, X, Y, Z = [], [], [], []
 
-    while t <= tmax:
-        Ux = []
-        x = 0
+    height = int(round(tmax/dt, precision))
+    width = int(round(abs(xmax-x0)/h + x0/h, precision))
 
-        while x <= xmax:
-            U_next = 0
+    U = [[0 for w in range(width+1)] for h in range(height+1)]
+    X, Y, Z = [], [], []
+
+    for j in range(height+1):
+        t = round(j*dt, precision)
+        
+        for i in range(width+1):
+            x = round(i*h, precision)
 
             if t == 0:
-                U_next = Ut0(x)
+                U[j][i] = Ut0(x)
 
-            elif x == 0 and a > 0 and x0 == 0:
-                U_next = Ux0(t)
+            elif x0 == x == 0 and a > 0:
+                U[j][i] = Ux0(t)
 
-            elif x == 1 and a < 0 and x0 == 0:
-                U_next = Ux1(t)
+            elif xmax == x == 1 and a < 0:
+                U[j][i] = Ux1(t)
 
             else:
-                U_next = U[j-1][i-1] + ((U[j-1][i] - Ux[i-1]) * (1-k) + 2*dt*f(x+h/2)) / (1+k)
+                U[j][i] = U[j-1][i-1] + ((U[j-1][i] - U[j][i-1]) * (1-k) + 2*dt*f(x+h/2)) / (1+k)
 
-            Ux.append(U_next)
-
-            if x >= x0:
+            if x0 <= x <= xmax:
                 X.append(x)
                 Y.append(t)
-                Z.append(U_next)
-            
-            x = round(x + h, precision)
-            i += 1
-
-        U.append(Ux)
-        t = round(t + dt, precision)
-        j += 1
-        i = 0
+                Z.append(U[j][i])
 
     return [X, Y, Z]
-
+    
 
 def plot3d(points):
     x = np.array(points[0])
@@ -229,22 +209,22 @@ def main():
     select = input()
 
     if select == "1":
-        plot3d(lower_right(1, 2, 10, 2, 0.1, 2))
+        plot3d(lower_right(-1, 2, 10, 2, 0.1, 4))
 
     elif select == "2":
-        plot3d(lower_left(1, 2, 10, -2, 0.1, 2))
+        plot3d(lower_left(-1, 2, 10, -2, 0.1, 4))
 
     elif select == "3":
-        plot3d(lower_right(0, 1, 10, 2, 0.1, 2))
+        plot3d(lower_right(0, 1, 10, 2, 0.1, 4))
 
     elif select == "4":
-        plot3d(lower_left(0, 1, 10, -2, 0.1, 2))
+        plot3d(lower_left(0, 1, 10, -2, 0.1, 4))
 
     elif select == "5":
-        plot3d(upper_right(0, 1, 10, 2, 0.1, 2))
+        plot3d(upper_right(0, 1, 10, 2, 0.1, 4))
 
     elif select == "6":
-        plot3d(four_corners(0, 1, 10, 2, 0.1, 2))
+        plot3d(four_corners(0, 1, 10, 2, 0.1, 4))
 
     else:
         print("Такого графика нет!")
