@@ -23,7 +23,7 @@ def lower_right(x0, xmax, tmax, a, h, precision):
     k = 0.5
     dt = h/a*k
 
-    height = ceil(round(tmax/dt, precision))
+    height = ceil(tmax/dt)
 
     # Строим "лесенку", если x0 != 0
 
@@ -35,7 +35,7 @@ def lower_right(x0, xmax, tmax, a, h, precision):
     elif x0 > 0:
         stair = min(height, x0/h)
 
-    width = ceil(round(abs(xmax-x0)/h + stair, precision))
+    width = ceil(abs(xmax-x0)/h + stair)
 
     U = [[0 for w in range(width+1)] for h in range(height+1)]
     X, Y, Z = [], [], []
@@ -70,7 +70,7 @@ def lower_left(x0, xmax, tmax, a, h, precision):
     k = -0.5
     dt = h/a*k
 
-    height = ceil(round(tmax/dt, precision))
+    height = ceil(tmax/dt)
 
     stair, offset = 0, 0
 
@@ -80,7 +80,7 @@ def lower_left(x0, xmax, tmax, a, h, precision):
     elif xmax < 1:
         stair = min(height, (1-xmax)/h)
 
-    width = ceil(round(abs(xmax-x0)/h + stair, precision))
+    width = ceil(abs(xmax-x0)/h + stair)
 
     U = [[0 for w in range(width+1)] for h in range(height+1)]
     X, Y, Z = [], [], []
@@ -115,8 +115,8 @@ def upper_right(x0, xmax, tmax, a, h, precision):  # только при x0 >= 0
     k = 0.5
     dt = h/a*k
 
-    height = ceil(round(tmax/dt, precision))
-    width = ceil(round(abs(xmax-x0)/h + x0/h, precision))
+    height = ceil(tmax/dt)
+    width = ceil(abs(xmax-x0)/h + x0/h)
 
     U = [[0 for w in range(width+1)] for h in range(height+1)]
     X, Y, Z = [], [], []
@@ -148,14 +148,14 @@ def four_corners(x0, xmax, tmax, a, h, precision):
     dt = h/abs(a)*0.5
     k = a*dt/h
 
-    height = ceil(round(tmax/dt, precision))
+    height = ceil(tmax/dt)
     width = 0
 
     if a > 0:
-        width = ceil(round(abs(xmax-x0)/h + x0/h, precision))
+        width = ceil(abs(xmax-x0)/h + x0/h)
 
     else:
-        width = ceil(round(abs(xmax-x0)/h + (1-xmax)/h, precision))
+        width = ceil(abs(xmax-x0)/h + (1-xmax)/h)
 
 
     U = [[0 for w in range(width+1)] for h in range(height+1)]
