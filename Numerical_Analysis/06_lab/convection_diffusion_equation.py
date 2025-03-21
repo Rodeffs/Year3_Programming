@@ -51,11 +51,8 @@ def lower_right(x0, xmax, tmax, a, h, precision):
             if t == 0:
                 U[j][i] = Ut0(x)
 
-            elif x0 == x == 0 and a > 0:
+            elif x0 == x == 0:
                 U[j][i] = Ux0(t)
-
-            elif xmax == x == 1 and a < 0:
-                U[j][i] = Ux1(t)
 
             else:
                 U[j][i] = k*U[j-1][i-1] + (1-k)*U[j-1][i] + dt*f(x)
@@ -99,10 +96,7 @@ def lower_left(x0, xmax, tmax, a, h, precision):
             if t == 0:
                 U[j][i] = Ut0(x)
 
-            elif x0 == x == 0 and a > 0:
-                U[j][i] = Ux0(t)
-
-            elif xmax == x == 1 and a < 0:
+            elif xmax == x == 1:
                 U[j][i] = Ux1(t)
 
             else:
@@ -135,11 +129,8 @@ def upper_right(x0, xmax, tmax, a, h, precision):  # только при x0 >= 0
             if t == 0:
                 U[j][i] = Ut0(x)
 
-            elif x0 == x == 0 and a > 0:
+            elif x0 == x == 0:
                 U[j][i] = Ux0(t)
-
-            elif xmax == x == 1 and a < 0:
-                U[j][i] = Ux1(t)
 
             else:
                 U[j][i] = (U[j-1][i] + k*U[j][i-1] + dt*f(x))/(1+k)
