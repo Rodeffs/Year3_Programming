@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import numpy as np
 from math import ceil
 
 
@@ -202,13 +201,9 @@ def four_corners(x0, xmax, tmax, a, h, precision):
     
 
 def plot3d(points):
-    x = np.array(points[0])
-    y = np.array(points[1])
-    z = np.array(points[2])
-
     ax = plt.figure().add_subplot(projection="3d")
     
-    ax.plot(x, y, z)
+    ax.plot(points[0], points[1], points[2])
     ax.set_xlabel("x")
     ax.set_ylabel("t")
     ax.set_zlabel("U(x, t)")
