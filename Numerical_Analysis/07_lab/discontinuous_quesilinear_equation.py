@@ -15,6 +15,7 @@ def artificial_viscosity(a, b, c, d, n, precision):
     height = ceil((d-c)/dt)
     width = n-1 + 2*height  # двойная лесенка, т.к. в формуле есть индексы i-1 и i+1
     U = [[0 for w in range(width+1)] for h in range(height+1)]
+    X, Y, Z = [], [], []
         
     j = 0
     while j <= height:
@@ -37,12 +38,18 @@ def artificial_viscosity(a, b, c, d, n, precision):
                 height = ceil((d-c)/dt)
                 width = n-1 + 2*height
                 U = [[0 for w in range(width+1)] for h in range(height+1)]
+                X, Y, Z = [], [], []
                 j = -1
                 break
 
+            if a <= x <= b:
+                X.append(x)
+                Y.append(t)
+                Z.append(U[j][i])
+
         j += 1
     
-    return U
+    return [X, Y, Z]
 
 
 def conservative_method(a, b, c, d, n, precision):
@@ -51,7 +58,8 @@ def conservative_method(a, b, c, d, n, precision):
     dt = 0.5*h
     height = ceil((d-c)/dt)
     width = n-1 + height  # лесенка, т.к. в формуле есть индекс i-1
-    U = [[0 for w in range(width+1)] for h in range(height+1)] 
+    U = [[0 for w in range(width+1)] for h in range(height+1)]
+    X, Y, Z = [], [], []
 
     j = 0
     while j <= height:
@@ -73,32 +81,24 @@ def conservative_method(a, b, c, d, n, precision):
                 height = ceil((d-c)/dt)
                 width = n-1 + height
                 U = [[0 for w in range(width+1)] for h in range(height+1)] 
+                X, Y, Z = [], [], []
                 j = -1
                 break
 
+            if a <= x <= b:
+                X.append(x)
+                Y.append(t)
+                Z.append(U[j][i])
+
         j += 1
 
-    return U
+    return [X, Y, Z]
 
 
-def plot2d(a, b, c, d, points):
-    x, y, z = [], [], []
-    
-    height = len(points)
-    width = len(points[0])
-    
-    dt = (d-c)/height
-    h = (b-a)/width
-
-    for j in range(height):
-        for i in range(width):
-            x.append(a+i*h)
-            y.append(c+j*dt)
-            z.append(points[j][i])
-
+def plot2d(points):
     ax = plt.figure().add_subplot(projection="3d")
     
-    ax.plot(x, y, z)
+    ax.plot(points[0], points[1], points[2])
     ax.set_xlabel("x")
     ax.set_ylabel("t")
     ax.set_zlabel("U(x, t)")
@@ -116,10 +116,10 @@ def main():
     select = input()
 
     if select == "1":
-        plot2d(a, b, c, d, artificial_viscosity(a, b, c, d, n, precision))
+        plot2d(artificial_viscosity(a, b, c, d, n, precision))
 
     elif select == "2":
-        plot2d(a, b, c, d, conservative_method(a, b, c, d, n, precision))
+        plot2d(conservative_method(a, b, c, d, n, precision))
 
     else:
         print("Такого графика нет!")
