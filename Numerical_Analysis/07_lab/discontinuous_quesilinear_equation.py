@@ -95,7 +95,7 @@ def conservative_method(a, b, c, d, n, precision):
     return [X, Y, Z]
 
 
-def plot2d(points):
+def plot3d(points):
     ax = plt.figure().add_subplot(projection="3d")
     
     ax.plot(points[0], points[1], points[2])
@@ -116,10 +116,10 @@ def main():
     select = input()
 
     if select == "1":
-        plot2d(artificial_viscosity(a, b, c, d, n, precision))
+        plot3d(artificial_viscosity(a, b, c, d, n, precision))
 
     elif select == "2":
-        plot2d(conservative_method(a, b, c, d, n, precision))
+        plot3d(conservative_method(a, b, c, d, n, precision))
 
     else:
         print("Такого графика нет!")
