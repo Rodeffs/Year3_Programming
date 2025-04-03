@@ -37,7 +37,7 @@ def artificial_viscosity(a, b, c, d, h, dt):
 
 def conservative_method(a, b, c, d, h, dt):
     height = ceil((d-c)/dt)
-    width = ceil((b-a)/h) + 2*height  # двойная лесенка, т.к. в формуле есть индексы i-1 и i+1
+    width = ceil((b-a)/h) + height  # лесенка, т.к. в формуле есть индексы i-1
 
     U = [[0 for w in range(width+1)] for h in range(height+1)]
     X, Y, Z = [], [], []
