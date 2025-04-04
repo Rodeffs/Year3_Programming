@@ -25,8 +25,8 @@ def artificial_viscosity(a, b, c, d, h, dt):
             else:
                 U[j][i] = U[j-1][i] - dt/h * U[j-1][i] * (U[j-1][i] - U[j-1][i-1]) - epsilon**2 * dt * 0.5 / h**3 * (U[j-1][i+1] - U[j-1][i-1]) * (U[j-1][i+1] - 2 * U[j-1][i] + U[j-1][i-1])
 
-    X = X[height:-height+1]  # срезаем лишние данные
-    U = U[:, height:-height+1]
+    X = X[height-1:-height+1]  # срезаем лишние данные
+    U = U[:, height-1:-height+1]
 
     return [X, T, U]
 
@@ -48,8 +48,8 @@ def conservative_method(a, b, c, d, h, dt):
             else:
                 U[j][i] = U[j-1][i] + 0.5*dt/h*(U[j-1][i-1]**2 - U[j-1][i]**2)
             
-    X = X[height:]
-    U = U[:, height:]
+    X = X[height-1:]
+    U = U[:, height-1:]
 
     return [X, T, U]
 
