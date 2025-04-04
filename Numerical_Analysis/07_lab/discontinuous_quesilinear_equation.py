@@ -1,5 +1,5 @@
-from math import ceil
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def Ut0(x):
@@ -9,63 +9,56 @@ def Ut0(x):
 def artificial_viscosity(a, b, c, d, h, dt):
     epsilon = 0.01
 
-    height = ceil((d-c)/dt)
-    width = ceil((b-a)/h) + 2*height  # двойная лесенка, т.к. в формуле есть индексы i-1 и i+1
+    T = np.arange(c, d + dt, dt)
+    height = len(T)
 
-    U = [[0 for w in range(width+1)] for h in range(height+1)]
-    X, Y, Z = [], [], []
-        
-    for j in range(height+1):
-        t = c + j*dt
+    X = np.arange(a - h*(height-1), b + h*height, h) # двойная лесенка, т.к. в формуле есть индексы i-1 и i+1
+    width = len(X)
 
-        for i in range(j, (width+1)-j):
-            x = a + (i-height)*h
+    U = np.zeros((height, width))
 
-            if t == 0:
-                U[j][i] = Ut0(x)
+    for j in range(height):
+        for i in range(j, width-j):
+            if T[j] == 0:
+                U[j][i] = Ut0(X[i])
 
             else:
                 U[j][i] = U[j-1][i] - dt/h * U[j-1][i] * (U[j-1][i] - U[j-1][i-1]) - epsilon**2 * dt * 0.5 / h**3 * (U[j-1][i+1] - U[j-1][i-1]) * (U[j-1][i+1] - 2 * U[j-1][i] + U[j-1][i-1])
 
-            if a <= x <= b:
-                X.append(x)
-                Y.append(t)
-                Z.append(U[j][i])
-    
-    return [X, Y, Z]
+    X = X[height:-height+1]  # срезаем лишние данные
+    U = U[:, height:-height+1]
+
+    return [X, T, U]
 
 
 def conservative_method(a, b, c, d, h, dt):
-    height = ceil((d-c)/dt)
-    width = ceil((b-a)/h) + height  # лесенка, т.к. в формуле есть индексы i-1
+    T = np.arange(c, d + dt, dt)
+    height = len(T)
 
-    U = [[0 for w in range(width+1)] for h in range(height+1)]
-    X, Y, Z = [], [], []
+    X = np.arange(a - h*(height-1), b + h, h) # лесенка, т.к. в формуле есть индексы i-1
+    width = len(X)
 
-    for j in range(height+1):
-        t = c + j*dt
+    U = np.zeros((height, width))
 
-        for i in range(j, width+1):
-            x = a + (i-height)*h
-
-            if t == 0:
-                U[j][i] = Ut0(x)
+    for j in range(height):
+        for i in range(j, width):
+            if T[j] == 0:
+                U[j][i] = Ut0(X[i])
 
             else:
                 U[j][i] = U[j-1][i] + 0.5*dt/h*(U[j-1][i-1]**2 - U[j-1][i]**2)
             
-            if a <= x <= b:
-                X.append(x)
-                Y.append(t)
-                Z.append(U[j][i])
+    X = X[height:]
+    U = U[:, height:]
 
-    return [X, Y, Z]
+    return [X, T, U]
 
 
 def plot3d(points):
     ax = plt.figure().add_subplot(projection="3d")
+    X, T = np.meshgrid(points[0], points[1])
     
-    ax.plot(points[0], points[1], points[2])
+    ax.plot_surface(X, T, points[2])
     ax.set_xlabel("x")
     ax.set_ylabel("t")
     ax.set_zlabel("U(x, t)")
