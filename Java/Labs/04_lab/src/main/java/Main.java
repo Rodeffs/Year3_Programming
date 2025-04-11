@@ -1,4 +1,5 @@
 import library.*;
+import java.util.List;
 
 public class Main {
     
@@ -47,5 +48,16 @@ public class Main {
 
 	System.out.println("\nСтатистика книг авторов после удаления всех книг одного автора:");
 	libraryTest.printAuthorStatistics();
+
+	System.out.println("\nСписок книг одного автора:");
+	List<Book> authorList = libraryTest.findBooksByAuthor("Leo Tolstoy");
+	for (var book : authorList)
+	    System.out.println(book);
+
+	System.out.println("\nСписок книг одного года:");
+	List<Book> yearList = libraryTest.findBooksByYear(1967);
+	for (var book : yearList)
+	    System.out.println(book);
+
     }
 }
