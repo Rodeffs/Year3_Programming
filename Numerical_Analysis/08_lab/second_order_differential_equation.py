@@ -74,6 +74,7 @@ def implicit_method_1(D, a, b, c, d, h, T):  # шаблон вида T
 
         alpha = np.zeros(width-1)
         beta = np.zeros(width-1)
+        beta[0] = Ux0(t[j])  # ВАЖНО! Иначе всё неправильно
 
         l = (D*T/h)**2
         A = l
@@ -116,6 +117,7 @@ def implicit_method_2(D, a, b, c, d, h, T):  # шаблон вида I
 
         alpha = np.zeros(width-1)
         beta = np.zeros(width-1)
+        beta[0] = Ux0(t[j])  # ВАЖНО! Иначе всё неправильно
 
         l = (D*T/h)**2/2
         A = l
