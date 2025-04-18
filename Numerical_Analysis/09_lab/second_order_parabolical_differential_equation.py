@@ -4,22 +4,18 @@ import numpy as np
 
 
 def Ut0(x):
-    return 1-x
-
-
-def dUt0(x):
-    return -2
+    return x+2+x**2*(1-x)
 
 
 def Ux0(t):
-    return 1
+    return 2
 
 
 def Ux1(t):
-    return 0
+    return 3
 
 
-def explicit_method(D, a, b, c, d, h, T):  # шаблон вида +
+def explicit_method(D, a, b, c, d, h, T):
     x = np.arange(a, b + h, h)
     t = np.arange(c, d + T, T)
     height, width = len(t), len(x)
@@ -34,25 +30,17 @@ def explicit_method(D, a, b, c, d, h, T):  # шаблон вида +
             elif i == width - 1:
                 U[j][i] = Ux1(t[j])
 
-            # U[0][i] = phi(x)
-
             elif j == 0:
                 U[j][i] = Ut0(x[i])
 
-            # U[1][i] = U[0][i] + T*psi(x) + a^2*T^2/2*phi''(x), где psi(x) = dUt0(x) и phi(x) = Ut0(x)
-            # Из условия понятно, phi''(x) = 0, тогда останется лишь U[1][i] = U[0][i] + T*psi(x) 
-
-            elif j == 1:
-                U[j][i] = U[j-1][i] + T*dUt0(x[i])
-
             else:
-                l = (D*T/h)**2
-                U[j][i] = 2*(1-l)*U[j-1][i] + l*(U[j-1][i+1] + U[j-1][i-1]) - U[j-2][i]
+                l = D*T/(h**2)
+                U[j][i] = l*U[j-1][i+1] + (1-2*l)*U[j-1][i] + l*U[j-1][i-1]
 
     return [x, t, U]
 
 
-def implicit_method_1(D, a, b, c, d, h, T):  # шаблон вида T
+def implicit_method(D, a, b, c, d, h, T):
     x = np.arange(a, b + h, h)
     t = np.arange(c, d + T, T)
     height, width = len(t), len(x)
@@ -65,67 +53,23 @@ def implicit_method_1(D, a, b, c, d, h, T):  # шаблон вида T
 
     for i in range(1, width-1):  # начальные условия
         U[0][i] = Ut0(x[i])
-        U[1][i] = U[0][i] + T*dUt0(x[i])
 
     # Далее метод прогонки
 
-    for j in range(2, height):
+    for j in range(1, height):
         # Сначала находим прогоночные коэф. альфа и бета
 
         alpha = np.zeros(width-1)
         beta = np.zeros(width-1)
         beta[0] = Ux0(t[j])  # ВАЖНО! Иначе всё неправильно
 
-        l = (D*T/h)**2
+        l = D*T/(h**2)
         A = l
         B = -(1+2*l)
         C = l
 
         for i in range(1, width-1):
-            F = U[j-2][i] - 2*U[j-1][i]
-
-            alpha[i] = -C/(A*alpha[i-1] + B)
-            beta[i] = (F - A*beta[i-1])/(A*alpha[i-1] + B)
-
-        # Потом, начиная с конца, находим все значения U[j][i]
-
-        for i in range(width-2, 0, -1):
-            U[j][i] = alpha[i]*U[j][i+1] + beta[i]
-
-    return [x, t, U]
-
-
-def implicit_method_2(D, a, b, c, d, h, T):  # шаблон вида I
-    x = np.arange(a, b + h, h)
-    t = np.arange(c, d + T, T)
-    height, width = len(t), len(x)
-
-    U = np.zeros((height, width))
-
-    for j in range(height):  # граничные условия
-        U[j][0] = Ux0(t[j])
-        U[j][width-1] = Ux1(t[j])
-
-    for i in range(1, width-1):  # начальные условия
-        U[0][i] = Ut0(x[i])
-        U[1][i] = U[0][i] + T*dUt0(x[i])
-
-    # Далее метод прогонки
-
-    for j in range(2, height):
-        # Сначала находим прогоночные коэф. альфа и бета
-
-        alpha = np.zeros(width-1)
-        beta = np.zeros(width-1)
-        beta[0] = Ux0(t[j])  # ВАЖНО! Иначе всё неправильно
-
-        l = (D*T/h)**2/2
-        A = l
-        B = -(1+2*l)
-        C = l
-
-        for i in range(1, width-1):
-            F = (1+2*l)*U[j-2][i] - l*(U[j-2][i+1] + U[j-2][i-1]) - 2*U[j-1][i]
+            F = -U[j-1][i]
 
             alpha[i] = -C/(A*alpha[i-1] + B)
             beta[i] = (F - A*beta[i-1])/(A*alpha[i-1] + B)
@@ -155,21 +99,18 @@ def main():
     c, d = 0, 10
     D = 1
 
-    # D*T/h < 1 и погрешность O(T^2 + h^2) должна быть не больше 0.01
-    h = 0.01
+    # D*T/h^2 <= 1/2 и погрешность O(T + h^2) должна быть не больше 0.01
+    h = 0.05
     T = 0.001
 
-    print("Решение каким шаблоном вывести? (1-3)\n1). Шаблон вида '+' (явный)\n2). Шаблон вида 'T' (неявный)\n3). Шаблон вида 'I' (неявный)")
+    print("Решение каким методом вывести? (1-2)\n1). Явный метод\n2). Неявный метод\n")
     select = input()
 
     if select == "1":
         plot3d(explicit_method(D, a, b, c, d, h, T))
 
     elif select == "2":
-        plot3d(implicit_method_1(D, a, b, c, d, h, T))
-
-    elif select == "3":
-        plot3d(implicit_method_2(D, a, b, c, d, h, T))
+        plot3d(implicit_method(D, a, b, c, d, h, T))
 
     else:
         print("Такого шаблона нет!")
