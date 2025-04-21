@@ -11,7 +11,7 @@ def f(x, y):
     return 2*x*(10 - y)
 
 
-def simple_iteration(a, b, c, d, n, precision):
+def simple_iteration(a, b, c, d, n, epsilon):
     h = (b-a)/n
 
     U = np.zeros((n+1, n+1))
@@ -42,19 +42,18 @@ def simple_iteration(a, b, c, d, n, precision):
         for j in range(1, n):
             for i in range(1, n):
                 U_next[j][i] = 1/4 * (U[j][i+1] + U[j][i-1] + U[j+1][i] + U[j-1][i] - h**2*f(x[i], y[j]))
-                U_next[j][i] = round(U_next[j][i], precision+1)
 
                 diff = abs(U_next[j][i] - U[j][i])
                 max_diff = max(max_diff, diff)
 
-        if max_diff < 10**-precision:
+        if max_diff < epsilon:
             return [x, y, U_next]
 
         np.copyto(U, U_next)
 
 
 
-def seidel_method(a, b, c, d, n, precision):
+def seidel_method(a, b, c, d, n, epsilon):
     h = (b-a)/n
     
     U = np.zeros((n+1, n+1))
@@ -75,19 +74,19 @@ def seidel_method(a, b, c, d, n, precision):
         for j in range(1, n):
             for i in range(1, n):
                 new_value = 1/4 * (U[j][i+1] + U[j][i-1] + U[j+1][i] + U[j-1][i] - h**2*f(x[i], y[j]))
-                new_value = round(new_value, precision+1)
 
                 diff = abs(new_value - U[j][i])
                 U[j][i] = new_value
 
                 max_diff = max(max_diff, diff)
 
-        if max_diff < 10**-precision:
+        if max_diff < epsilon:
             return [x, y, U]
 
 
 def plot3d(data1, data2):
     fig = plt.figure()
+
     ax = fig.add_subplot(1, 2, 1, projection="3d")
     X, Y = np.meshgrid(data1[0], data1[1])
     
@@ -98,6 +97,8 @@ def plot3d(data1, data2):
     ax.set_title("Метод простых итераций")
 
     ax = fig.add_subplot(1, 2, 2, projection="3d")
+    X, Y = np.meshgrid(data2[0], data2[1])
+
     ax.plot_surface(X, Y, data2[2], cmap=cm.Blues)
     ax.set_xlabel("x")
     ax.set_ylabel("y")
@@ -108,17 +109,16 @@ def plot3d(data1, data2):
 
 
 def main():
-
     # Стороны должны быть соразмерны
     a, b = 0, 10
     c, d = 0, 10
-
-    precision = 2  # точность знаков после запятой
+    
+    epsilon = 0.01
 
     print("Введите размер сетки:")
     n = int(input())
     
-    plot3d(simple_iteration(a, b, c, d, n, precision), seidel_method(a, b, c, d, n, precision))
+    plot3d(simple_iteration(a, b, c, d, n, epsilon), seidel_method(a, b, c, d, n, epsilon))
 
 
 if __name__ == "__main__":
