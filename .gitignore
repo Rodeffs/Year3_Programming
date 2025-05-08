@@ -5,5 +5,5 @@
 **/.vs
 **/Release
 **/Debug
-*.ipynb_*
+*.ipynb_checkpoints
 
