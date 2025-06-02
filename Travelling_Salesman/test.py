@@ -135,7 +135,7 @@ class Branch:
         bound = self.__calculate_bound()
 
         if bound == ms:
-            return None, None
+            self._bound = ms
 
         else:
             self._bound += bound
@@ -143,11 +143,12 @@ class Branch:
         print(self._mat)
          
         src, dst = self.__calculate_loss()
+
+        print(self._bound, self._loss)
        
         # Ветвь, где этот маршрут не включён
 
         self._mat[src][dst] = ms
-        print(self._mat)
 
         if self._loss == ms:
             self._left = None
@@ -156,10 +157,17 @@ class Branch:
             self._left = Branch(self._mat, self._n, self, self._bound+self._loss, self._x, self._y)
 
         # Ветвь, где этот маршрут включён
+        
+        y, x = self._y[src], self._x[dst]
+        self._path = (y, x)
 
-        self._path = (self._y[src], self._x[dst])
+        try:
+            reverse_src = self._y.index(x)
+            reverse_dst = self._x.index(y)
+            self._mat[reverse_src][reverse_dst] = ms
 
-        self._mat[dst][src] = ms
+        except:
+            pass
         
         self._y.pop(src)
         self._mat = np.delete(self._mat, src, 0)
@@ -173,32 +181,17 @@ class Branch:
 
 
 def main():
-    n = 20
+    n = 5
 
     mat = np.array([
-        [ms, 82, ms, 87, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms,  2, 12],
-        [82, ms, 70, 47, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, 69, ms, ms, ms, 54],
-        [ms, 70, ms, 37, 59,  2, ms, ms, ms, ms, ms, ms, ms, ms, ms, 15, 19, ms, ms, ms],
-        [87, 47, 37, ms, 63, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms,  3, 83, ms, 43],
-        [ms, ms, 59, 63, ms, 24, 58, ms, ms, ms, 32, ms, ms, 34, ms, 62, 24, ms, ms, ms],
-        [ms, ms,  2, ms, 24, ms, 84, ms, 91, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms],
-        [ms, ms, ms, ms, 58, 84, ms, ms, 27, ms, ms, ms, ms, 36, ms, 56, ms, ms, ms, ms],
-        [ms, ms, ms, ms, ms, ms, ms, ms, 47, 80, ms, ms, ms, 21, ms, ms, ms, ms, ms, ms],
-        [ms, ms, ms, ms, ms, 91, 27, 47, ms, 98, ms, ms, ms, 68, ms, ms, ms, ms, ms, ms],
-        [ms, ms, ms, ms, ms, ms, ms, 80, 98, ms,  8, 46, ms, 22, ms, ms, ms, ms, ms, ms],
-        [ms, ms, ms, ms, 32, ms, ms, ms, ms,  8, ms, 38, 66, 51, ms, 95, 22, ms, ms, ms],
-        [ms, ms, ms, ms, ms, ms, ms, ms, ms, 46, 38, ms, ms, 86, ms, ms, ms, ms, ms, ms],
-        [ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, 66, ms, ms, ms, 94,  7, 99, ms, ms, ms],
-        [ms, ms, ms, ms, 34, ms, 36, 21, 68, 22, 51, 86, ms, ms, ms, 76, ms, ms, ms, ms],
-        [ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, 94, ms, ms, ms, 79, 78, 39, 65],
-        [ms, 69, 15, ms, 62, ms, 56, ms, ms, ms, 95, ms,  7, 76, ms, ms, 71, ms, ms, ms],
-        [ms, ms, 19,  3, 24, ms, ms, ms, ms, ms, 22, ms, 99, ms, 79, 71, ms, ms, 81, 59],
-        [ms, ms, ms, 83, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, 78, ms, ms, ms, 57,  1],
-        [ 2, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, 39, ms, 81, 57, ms, 46],
-        [12, 54, ms, 43, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, 65, ms, 59,  1, 46, ms]
+        [ms, 20, 18, 12, 8],
+        [5, ms, 14, 7, 11],
+        [12, 18, ms, 6, 11],
+        [11, 17, 11, ms, 12],
+        [5, 5, 5, 5, ms]
         ], dtype=np.int64)
 
-    titles = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
+    titles = ['A', 'B', 'C', 'D', 'E']
 
     root = Branch(mat, n, None, 0, titles, titles)
     final_branch = root
