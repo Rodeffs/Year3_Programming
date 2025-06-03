@@ -1,161 +1,105 @@
-#from sys import maxsize as ms
-ms = 100
-
+ms = 99999999999999  # большое число, считаем за бесконечность
 import numpy as np
 
 
+# Класс, который будет хранить каждую ветвь
+
 class Branch:
-    def __init__(self, mat, n, parent, bound):
-        self._parent = parent
-        self._path = ()
-        self._n = n
-        self._mat = np.zeros((n, n), dtype=np.int64)
+    def __init__(self, mat, path, bound):
+        self._path = path
+
+        self._mat = np.zeros(mat.shape, dtype=np.int64)
         np.copyto(self._mat, mat)
+
         self._bound = bound
-        self._loss = 0
 
     @property
-    def parent(self):
-        return self._parent
-
-    @parent.setter
-    def parent(self, parent):
-        self._parent = parent
+    def mat(self):
+        return self._mat
 
     @property
     def bound(self):
         return self._bound
 
+    @bound.setter
+    def bound(self, value):
+        self._bound = value
+
     @property
     def path(self):
         return self._path
 
-    @property
-    def loss(self):
-        return self._loss
+    @path.setter
+    def path(self, value):
+        self._path = value
 
-    @property
-    def size(self):
-        return self._n
 
-    def __calculate_bound(self):
-        # Редукция строк
+def calculate_bound(mat):
+    n = mat.shape[0]
+    values_mat = mat[1:, 1:]
 
-        min_rows = np.min(self._mat, axis=1)
+    # Редукция строк
 
-        for i in range(1, self._n):
-            for j in range(1, self._n):
-                if self._mat[i][j] != ms:
-                    self._mat[i][j] -= min_rows[i]
+    min_rows = np.min(values_mat, axis=1)
 
-        # Редукция столбцов
+    for i in range(1, n):
+        for j in range(1, n):
+            if mat[i][j] != ms:
+                mat[i][j] -= min_rows[i-1]
 
-        min_cols = np.min(self._mat, axis=0)
+    # Редукция столбцов
 
-        for i in range(1, self._n):
-            for j in range(1, self._n):
-                if self._mat[i][j] != ms:
-                    self._mat[i][j] -= min_cols[j]
-        
-        min_rows = np.delete(min_rows, 0)
-        min_cols = np.delete(min_cols, 0)
+    min_cols = np.min(values_mat, axis=0)
 
-        if ms in min_rows or ms in min_cols:
-            return ms
+    for i in range(1, n):
+        for j in range(1, n):
+            if mat[i][j] != ms:
+                mat[i][j] -= min_cols[j-1]
 
-        sum_rows = np.sum(min_rows)
-        sum_cols = np.sum(min_cols)
+    # Верхняя грань
+    
+    if ms in min_rows or ms in min_cols:
+        return ms
 
-        if sum_rows >= ms or sum_cols >= ms or (sum_rows+sum_cols) >= ms:
-            return ms
+    else:
+        return np.sum(min_rows) + np.sum(min_cols)
 
-        return sum_cols + sum_rows
 
-    def __calculate_loss(self):
-        # Проводим оценки для нулевых клеток и выбираем ту, которая будет НАИБОЛЬШЕЙ
+def calculate_loss(mat):
+    # Проводим оценки для нулевых клеток и выбираем ту, которая будет НАИБОЛЬШЕЙ
+    
+    n = mat.shape[0] 
+    src, dst, max_loss = 0, 0, 0
+    
+    for i in range(1, n):
+        for j in range(1, n):
+            if mat[i][j] == 0:
 
-        src, dst = 0, 0
-        
-        for i in range(1, self._n):
-            for j in range(1, self._n):
-                if self._mat[i][j] == 0:
-                    # Минимум по строке, не считая самого элемента
+                mat[i][j] = ms
 
-                    self._mat[i][j] = ms
+                # Минимум по строке, не считая самого элемента
 
-                    min_row = np.min(self._mat[i][1:])
-                    min_col = np.min(self._mat.transpose()[j][1:])
+                min_row = np.min(mat[i, 1:])
 
-                    loss = 0
+                # Минимум по столбцу, не считая самого элемента
 
-                    if min_col == ms or min_row == ms:
-                        loss = ms
+                min_col = np.min(mat[1:, j])
 
-                    else:
-                        loss = min_col + min_row
+                loss = 0
 
-                    if loss > self._loss:
-                        self._loss = loss
-                        src = i
-                        dst = j
+                if min_col == ms or min_row == ms:
+                    loss = ms
 
-                    self._mat[i][j] = 0
+                else:
+                    loss = min_col + min_row
 
-        return src, dst
+                if loss > max_loss:
+                    max_loss = loss
+                    src, dst = i, j
 
-    def branching(self):
-        without_path, with_path = None, None
+                mat[i][j] = 0
 
-        if self._n <= 1:
-            return without_path, with_path
-
-        bound = self.__calculate_bound()
-
-        if bound == ms:
-            return without_path, with_path
-
-        else:
-            self._bound += bound
-
-        print(self._mat)
-         
-        src, dst = self.__calculate_loss()
-       
-        # Ветвь, где этот маршрут не включён
-
-        self._mat[src][dst] = ms
-        print(self._mat)
-
-        if self._loss != ms:
-            without_path = Branch(self._mat, self._n, self, self._bound+self._loss)
-
-        # Ветвь, где этот маршрут включён
-        
-        dst_cities = self._mat[0]
-        src_cities = self._mat.transpose()[0]
-        
-        src_city = src_cities[src]
-        dst_city = dst_cities[dst]
-
-        self._path = (src_city, dst_city)
-
-        # Если обратный маршрут есть, то помечаем его как недостижимый
-
-        try:
-            src_reverse = np.where(dst_cities == src_city)[0][0]
-            dst_reverse = np.where(src_cities == dst_city)[0][0]
-            self._mat[src_reverse][dst_reverse] = ms
-
-        except:
-            pass
-
-        self._mat = np.delete(self._mat, src, 0)
-        
-        self._mat = np.delete(self._mat, dst, 1)
-
-        with_path = Branch(self._mat, self._n-1, self, self._bound)
-
-        return without_path, with_path
+    return src, dst, max_loss
 
 
 def main():
@@ -183,38 +127,93 @@ def main():
         [20, 12, 54, ms, 43, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, 65, ms, 59,  1, 46, ms]
         ], dtype=np.int64)
 
-    root = Branch(mat, mat.shape[0], None, 0)
-    final_branch = root
+    city_names = ['', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
+    
+    final_path, final_bound = [], 0
+
+    # Корень дерева решения
+
+    root = Branch(mat, [], 0)
+    
+    # Сразу делаем редукцию и находим нижнюю грань
+
+    root.bound = calculate_bound(root.mat)
+    
+    # Очередь на обработку
+    
     queue = [root]
 
     while True:
+        # Из очереди берём ту ветвь, у которой нижняя грань наименьшая
+
         selected = min(queue, key=lambda x: x.bound)
-        left, right = selected.branching()
-
-        if selected.size <= 1:
-            final_branch = selected
-            break
-
-        if left is not None:
-            queue.append(left)
-
-        if right is not None:
-            queue.append(right)
-
         queue.remove(selected)
 
-    print("Длина оптимального пути:", final_branch.bound)
-    print("Оптимальный путь:")
-    
-    cur_branch = final_branch
-    while True:
-        print(cur_branch.path)
+        dst_cities = selected.mat[0]
+        src_cities = selected.mat[:, 0]
 
-        if cur_branch.parent is not None:
-            cur_branch = cur_branch.parent
+        # Условие остановки - если остался единственный маршрут
 
-        else:
+        if selected.mat.shape[0] <= 2:
+            selected.path.append((src_cities[1], dst_cities[1]))
+            final_path, final_bound = selected.path, selected.bound
             break
+
+        # Делаем оценки и находим маршрут
+        
+        src, dst, loss = calculate_loss(selected.mat)
+        src_city = src_cities[src]
+        dst_city = dst_cities[dst]
+
+        # Ветвь, где этот маршрут включён
+        
+        # Если обратный маршрут есть, то сразу помечаем его как недостижимый
+
+        try:
+            dst_reverse = np.where(dst_cities == src_city)[0][0]
+            src_reverse = np.where(src_cities == dst_city)[0][0]
+            selected.mat[src_reverse][dst_reverse] = ms
+
+        except:
+            pass
+
+        # Делаем редукцию матрицы
+
+        mat = np.zeros(selected.mat.shape, dtype=np.int64)
+        np.copyto(mat, selected.mat)
+
+        mat = np.delete(mat, src, 0)
+        mat = np.delete(mat, dst, 1)
+
+        # Делаем редукцию строк и столбцов
+
+        new_bound = selected.bound + calculate_bound(mat)
+
+        # Добавляем в очередь ветку, где включили маршрут
+        # Здесь нижняя грань - это сумма старой грани и минимумов из редукции
+
+        queue.append(Branch(mat, selected.path + [(src_city, dst_city)], new_bound))
+
+        # Теперь ветвь, где этот маршрут не включён
+
+        # Сначала помечаем маршрут как недостижимый
+
+        selected.mat[src][dst] = ms
+
+        # Затем делаем редукцию строк и столбцов
+
+        calculate_bound(selected.mat)
+
+        # Добавляем в очередь ветку, где не включили маршрут
+        # Здесь нижняя грань - это сумма старой грани и потери, когда не взяли маршрут
+
+        queue.append(Branch(selected.mat, selected.path, selected.bound + loss))
+
+    print("Длина оптимального пути:", final_bound)
+    print("Оптимальный путь")
+
+    for path in final_path:
+        print(city_names[path[0]], "->", city_names[path[1]])
 
 
 if __name__ == "__main__":
