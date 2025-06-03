@@ -45,7 +45,7 @@ def calculate_bound(mat):
         for j in range(1, mat.shape[1]):
             if mat[i][j] != ms:
                 mat[i][j] -= min_rows[i-1]
-
+    
     # Редукция столбцов
 
     min_cols = np.min(values_mat, axis=0)
@@ -141,32 +141,6 @@ def main():
         selected = min(queue, key=lambda x: x.bound)
         queue.remove(selected)
         
-        '''
-        # Для отладки
-
-        for i in range(selected.mat.shape[1]):
-            output = ""
-
-            for j in range(selected.mat.shape[0]):
-                if i == 0 or j == 0:
-                    output += " " + city_names[selected.mat[i][j]] + " "
-                
-                else:
-                    value = selected.mat[i][j]
-
-                    if value < 10:
-                        output += " " + str(value) + " "
-
-                    elif value < ms:
-                        output += str(value) + " "
-
-                    else:
-                        output += " ∞ "
-
-            print(output)
-        print()
-        '''
-
         dst_cities = selected.mat[0]
         src_cities = selected.mat[:, 0]
 
