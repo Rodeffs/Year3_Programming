@@ -121,7 +121,7 @@ def main():
         [20, 12, 54, ms, 43, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, 65, ms, 59,  1, 46, ms]
         ], dtype=np.int64)
 
-    city_names = ['', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
+    city_names = ['/', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
     
     final_path, final_bound = [], 0
 
@@ -140,6 +140,32 @@ def main():
 
         selected = min(queue, key=lambda x: x.bound)
         queue.remove(selected)
+        
+        '''
+        # Для отладки
+
+        for i in range(selected.mat.shape[1]):
+            output = ""
+
+            for j in range(selected.mat.shape[0]):
+                if i == 0 or j == 0:
+                    output += " " + city_names[selected.mat[i][j]] + " "
+                
+                else:
+                    value = selected.mat[i][j]
+
+                    if value < 10:
+                        output += " " + str(value) + " "
+
+                    elif value < ms:
+                        output += str(value) + " "
+
+                    else:
+                        output += " ∞ "
+
+            print(output)
+        print()
+        '''
 
         dst_cities = selected.mat[0]
         src_cities = selected.mat[:, 0]
