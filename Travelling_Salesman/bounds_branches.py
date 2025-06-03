@@ -5,21 +5,13 @@ import numpy as np
 
 
 class Branch:
-    def __init__(self, mat, n, parent, bound, x, y):
+    def __init__(self, mat, n, parent, bound):
         self._parent = parent
-        self._left = None
-        self._right = None
         self._path = ()
         self._n = n
-
         self._mat = np.zeros((n, n), dtype=np.int64)
-
-        if n > 0:
-            np.copyto(self._mat, mat)
-
+        np.copyto(self._mat, mat)
         self._bound = bound
-        self._x = [name for name in x]
-        self._y = [name for name in y]
         self._loss = 0
 
     @property
@@ -31,28 +23,8 @@ class Branch:
         self._parent = parent
 
     @property
-    def left(self):
-        return self._left
-
-    @left.setter
-    def left(self, left):
-        self._left = left
-
-    @property
-    def right(self):
-        return self._right
-
-    @right.setter
-    def right(self, right):
-        self._right = right
-
-    @property
     def bound(self):
         return self._bound
-
-    @bound.setter
-    def bound(self, bound):
-        self._bound = bound
 
     @property
     def path(self):
@@ -71,8 +43,8 @@ class Branch:
 
         min_rows = np.min(self._mat, axis=1)
 
-        for i in range(self._n):
-            for j in range(self._n):
+        for i in range(1, self._n):
+            for j in range(1, self._n):
                 if self._mat[i][j] != ms:
                     self._mat[i][j] -= min_rows[i]
 
@@ -80,10 +52,13 @@ class Branch:
 
         min_cols = np.min(self._mat, axis=0)
 
-        for i in range(self._n):
-            for j in range(self._n):
+        for i in range(1, self._n):
+            for j in range(1, self._n):
                 if self._mat[i][j] != ms:
                     self._mat[i][j] -= min_cols[j]
+        
+        min_rows = np.delete(min_rows, 0)
+        min_cols = np.delete(min_cols, 0)
 
         if ms in min_rows or ms in min_cols:
             return ms
@@ -101,15 +76,15 @@ class Branch:
 
         src, dst = 0, 0
         
-        for i in range(self._n):
-            for j in range(self._n):
+        for i in range(1, self._n):
+            for j in range(1, self._n):
                 if self._mat[i][j] == 0:
                     # Минимум по строке, не считая самого элемента
 
                     self._mat[i][j] = ms
 
-                    min_row = np.min(self._mat[i])
-                    min_col = np.min(self._mat.transpose()[j])
+                    min_row = np.min(self._mat[i][1:])
+                    min_col = np.min(self._mat.transpose()[j][1:])
 
                     loss = 0
 
@@ -129,13 +104,15 @@ class Branch:
         return src, dst
 
     def branching(self):
-        if self._n == 0:
-            return None, None
+        without_path, with_path = None, None
+
+        if self._n <= 1:
+            return without_path, with_path
 
         bound = self.__calculate_bound()
 
         if bound == ms:
-            return None, None
+            return without_path, with_path
 
         else:
             self._bound += bound
@@ -149,58 +126,64 @@ class Branch:
         self._mat[src][dst] = ms
         print(self._mat)
 
-        if self._loss == ms:
-            self._left = None
-
-        else:
-            self._left = Branch(self._mat, self._n, self, self._bound+self._loss, self._x, self._y)
+        if self._loss != ms:
+            without_path = Branch(self._mat, self._n, self, self._bound+self._loss)
 
         # Ветвь, где этот маршрут включён
-
-        self._path = (self._y[src], self._x[dst])
-
-        self._mat[dst][src] = ms
         
-        self._y.pop(src)
+        dst_cities = self._mat[0]
+        src_cities = self._mat.transpose()[0]
+        
+        src_city = src_cities[src]
+        dst_city = dst_cities[dst]
+
+        self._path = (src_city, dst_city)
+
+        # Если обратный маршрут есть, то помечаем его как недостижимый
+
+        try:
+            src_reverse = np.where(dst_cities == src_city)[0][0]
+            dst_reverse = np.where(src_cities == dst_city)[0][0]
+            self._mat[src_reverse][dst_reverse] = ms
+
+        except:
+            pass
+
         self._mat = np.delete(self._mat, src, 0)
         
-        self._x.pop(dst)
         self._mat = np.delete(self._mat, dst, 1)
 
-        self._right = Branch(self._mat, self._n-1, self, self._bound, self._x, self._y)
+        with_path = Branch(self._mat, self._n-1, self, self._bound)
 
-        return self._left, self._right
+        return without_path, with_path
 
 
 def main():
-    n = 20
-
     mat = np.array([
-        [ms, 82, ms, 87, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms,  2, 12],
-        [82, ms, 70, 47, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, 69, ms, ms, ms, 54],
-        [ms, 70, ms, 37, 59,  2, ms, ms, ms, ms, ms, ms, ms, ms, ms, 15, 19, ms, ms, ms],
-        [87, 47, 37, ms, 63, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms,  3, 83, ms, 43],
-        [ms, ms, 59, 63, ms, 24, 58, ms, ms, ms, 32, ms, ms, 34, ms, 62, 24, ms, ms, ms],
-        [ms, ms,  2, ms, 24, ms, 84, ms, 91, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms],
-        [ms, ms, ms, ms, 58, 84, ms, ms, 27, ms, ms, ms, ms, 36, ms, 56, ms, ms, ms, ms],
-        [ms, ms, ms, ms, ms, ms, ms, ms, 47, 80, ms, ms, ms, 21, ms, ms, ms, ms, ms, ms],
-        [ms, ms, ms, ms, ms, 91, 27, 47, ms, 98, ms, ms, ms, 68, ms, ms, ms, ms, ms, ms],
-        [ms, ms, ms, ms, ms, ms, ms, 80, 98, ms,  8, 46, ms, 22, ms, ms, ms, ms, ms, ms],
-        [ms, ms, ms, ms, 32, ms, ms, ms, ms,  8, ms, 38, 66, 51, ms, 95, 22, ms, ms, ms],
-        [ms, ms, ms, ms, ms, ms, ms, ms, ms, 46, 38, ms, ms, 86, ms, ms, ms, ms, ms, ms],
-        [ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, 66, ms, ms, ms, 94,  7, 99, ms, ms, ms],
-        [ms, ms, ms, ms, 34, ms, 36, 21, 68, 22, 51, 86, ms, ms, ms, 76, ms, ms, ms, ms],
-        [ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, 94, ms, ms, ms, 79, 78, 39, 65],
-        [ms, 69, 15, ms, 62, ms, 56, ms, ms, ms, 95, ms,  7, 76, ms, ms, 71, ms, ms, ms],
-        [ms, ms, 19,  3, 24, ms, ms, ms, ms, ms, 22, ms, 99, ms, 79, 71, ms, ms, 81, 59],
-        [ms, ms, ms, 83, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, 78, ms, ms, ms, 57,  1],
-        [ 2, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, 39, ms, 81, 57, ms, 46],
-        [12, 54, ms, 43, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, 65, ms, 59,  1, 46, ms]
+        [ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+        [ 1, ms, 82, ms, 87, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms,  2, 12],
+        [ 2, 82, ms, 70, 47, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, 69, ms, ms, ms, 54],
+        [ 3, ms, 70, ms, 37, 59,  2, ms, ms, ms, ms, ms, ms, ms, ms, ms, 15, 19, ms, ms, ms],
+        [ 4, 87, 47, 37, ms, 63, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms,  3, 83, ms, 43],
+        [ 5, ms, ms, 59, 63, ms, 24, 58, ms, ms, ms, 32, ms, ms, 34, ms, 62, 24, ms, ms, ms],
+        [ 6, ms, ms,  2, ms, 24, ms, 84, ms, 91, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms],
+        [ 7, ms, ms, ms, ms, 58, 84, ms, ms, 27, ms, ms, ms, ms, 36, ms, 56, ms, ms, ms, ms],
+        [ 8, ms, ms, ms, ms, ms, ms, ms, ms, 47, 80, ms, ms, ms, 21, ms, ms, ms, ms, ms, ms],
+        [ 9, ms, ms, ms, ms, ms, 91, 27, 47, ms, 98, ms, ms, ms, 68, ms, ms, ms, ms, ms, ms],
+        [10, ms, ms, ms, ms, ms, ms, ms, 80, 98, ms,  8, 46, ms, 22, ms, ms, ms, ms, ms, ms],
+        [11, ms, ms, ms, ms, 32, ms, ms, ms, ms,  8, ms, 38, 66, 51, ms, 95, 22, ms, ms, ms],
+        [12, ms, ms, ms, ms, ms, ms, ms, ms, ms, 46, 38, ms, ms, 86, ms, ms, ms, ms, ms, ms],
+        [13, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, 66, ms, ms, ms, 94,  7, 99, ms, ms, ms],
+        [14, ms, ms, ms, ms, 34, ms, 36, 21, 68, 22, 51, 86, ms, ms, ms, 76, ms, ms, ms, ms],
+        [15, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, 94, ms, ms, ms, 79, 78, 39, 65],
+        [16, ms, 69, 15, ms, 62, ms, 56, ms, ms, ms, 95, ms,  7, 76, ms, ms, 71, ms, ms, ms],
+        [17, ms, ms, 19,  3, 24, ms, ms, ms, ms, ms, 22, ms, 99, ms, 79, 71, ms, ms, 81, 59],
+        [18, ms, ms, ms, 83, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, 78, ms, ms, ms, 57,  1],
+        [19,  2, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, 39, ms, 81, 57, ms, 46],
+        [20, 12, 54, ms, 43, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, 65, ms, 59,  1, 46, ms]
         ], dtype=np.int64)
 
-    titles = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']
-
-    root = Branch(mat, n, None, 0, titles, titles)
+    root = Branch(mat, mat.shape[0], None, 0)
     final_branch = root
     queue = [root]
 
@@ -208,7 +191,7 @@ def main():
         selected = min(queue, key=lambda x: x.bound)
         left, right = selected.branching()
 
-        if selected.size == 0:
+        if selected.size <= 1:
             final_branch = selected
             break
 
