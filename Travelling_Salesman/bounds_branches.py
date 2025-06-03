@@ -1,6 +1,7 @@
-ms = 99999999999999  # большое число, считаем за бесконечность
 import numpy as np
 import time
+
+ms = 99999999999999999 # большое число, считаем за бесконечность
 
 
 # Класс, который будет хранить каждую ветвь
@@ -8,10 +9,8 @@ import time
 class Branch:
     def __init__(self, mat, path, bound):
         self._path = path
-
         self._mat = np.zeros(mat.shape, dtype=np.int64)
         np.copyto(self._mat, mat)
-
         self._bound = bound
 
     @property
@@ -36,15 +35,14 @@ class Branch:
 
 
 def calculate_bound(mat):
-    n = mat.shape[0]
     values_mat = mat[1:, 1:]
 
     # Редукция строк
 
     min_rows = np.min(values_mat, axis=1)
 
-    for i in range(1, n):
-        for j in range(1, n):
+    for i in range(1, mat.shape[0]):
+        for j in range(1, mat.shape[1]):
             if mat[i][j] != ms:
                 mat[i][j] -= min_rows[i-1]
 
@@ -52,8 +50,8 @@ def calculate_bound(mat):
 
     min_cols = np.min(values_mat, axis=0)
 
-    for i in range(1, n):
-        for j in range(1, n):
+    for i in range(1, mat.shape[0]):
+        for j in range(1, mat.shape[1]):
             if mat[i][j] != ms:
                 mat[i][j] -= min_cols[j-1]
 
@@ -69,30 +67,25 @@ def calculate_bound(mat):
 def calculate_loss(mat):
     # Проводим оценки для нулевых клеток и выбираем ту, которая будет НАИБОЛЬШЕЙ
     
-    n = mat.shape[0] 
     src, dst, max_loss = 0, 0, 0
     
-    for i in range(1, n):
-        for j in range(1, n):
+    for i in range(1, mat.shape[0]):
+        for j in range(1, mat.shape[1]):
             if mat[i][j] == 0:
+                # Не считаем сам элемент при подсчёте минимумов
 
                 mat[i][j] = ms
 
-                # Минимум по строке, не считая самого элемента
-
-                min_row = np.min(mat[i, 1:])
-
-                # Минимум по столбцу, не считая самого элемента
-
-                min_col = np.min(mat[1:, j])
+                min_in_row = np.min(mat[i, 1:])
+                min_in_col = np.min(mat[1:, j])
 
                 loss = 0
 
-                if min_col == ms or min_row == ms:
+                if min_in_col == ms or min_in_row == ms:
                     loss = ms
 
                 else:
-                    loss = min_col + min_row
+                    loss = min_in_col + min_in_row
 
                 if loss > max_loss:
                     max_loss = loss
@@ -140,8 +133,6 @@ def main():
 
     root.bound = calculate_bound(root.mat)
     
-    # Очередь на обработку
-    
     queue = [root]
 
     while True:
@@ -166,8 +157,8 @@ def main():
         src_city = src_cities[src]
         dst_city = dst_cities[dst]
 
-        # Ветвь, где этот маршрут включён
-        
+        # Рассмотрим ветвь, где этот маршрут включён
+
         # Если обратный маршрут есть, то сразу помечаем его как недостижимый
 
         try:
@@ -195,7 +186,7 @@ def main():
 
         queue.append(Branch(mat, selected.path + [(src_city, dst_city)], new_bound))
 
-        # Теперь ветвь, где этот маршрут не включён
+        # Теперь рассмотрим ветвь, где этот маршрут не включён
 
         # Сначала помечаем маршрут как недостижимый
 
