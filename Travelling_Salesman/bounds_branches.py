@@ -1,5 +1,6 @@
 ms = 99999999999999  # большое число, считаем за бесконечность
 import numpy as np
+import time
 
 
 # Класс, который будет хранить каждую ветвь
@@ -209,12 +210,15 @@ def main():
 
         queue.append(Branch(selected.mat, selected.path, selected.bound + loss))
 
-    print("Длина оптимального пути:", final_bound)
-    print("Оптимальный путь")
+    print("Optimal path:")
 
     for path in final_path:
         print(city_names[path[0]], "->", city_names[path[1]])
 
+    print("\nTotal cost:", final_bound)
+
 
 if __name__ == "__main__":
+    start = time.time()
     main()
+    print("\nSearch time:", time.time() - start, "seconds")
