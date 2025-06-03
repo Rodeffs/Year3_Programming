@@ -206,10 +206,35 @@ def main():
         queue.append(Branch(selected.mat, selected.path, selected.bound + loss))
 
     print("Длина оптимального пути:", final_bound)
-    print("Оптимальный путь:")
 
-    for path in final_path:
-        print(city_names[path[0]], "->", city_names[path[1]])
+    print(final_path)
+
+    cur_path = final_path[0]
+    ordered_path = [cur_path[0]]
+
+    while len(final_path) > 0:
+        ordered_path.append(cur_path[1])
+        final_path.remove(cur_path)
+
+        for next_path in final_path:
+            if next_path[0] == cur_path[1]:
+                cur_path = next_path
+                break
+    
+    path_string = ""
+
+    n = len(ordered_path)
+
+    for i in range(n):
+        city = city_names[ordered_path[i]]
+
+        if i != n - 1:
+            path_string += city + " -> "
+
+        else:
+            path_string += city
+
+    print("Оптимальный путь:", path_string)
 
 
 if __name__ == "__main__":
