@@ -161,30 +161,30 @@ def main():
 
         # Если обратный маршрут есть, то сразу помечаем его как недостижимый
 
+        mat_with_path = np.zeros(selected.mat.shape, dtype=np.int64)
+        np.copyto(mat_with_path, selected.mat)
+
         try:
             dst_reverse = np.where(dst_cities == src_city)[0][0]
             src_reverse = np.where(src_cities == dst_city)[0][0]
-            selected.mat[src_reverse][dst_reverse] = ms
+            mat_with_path[src_reverse][dst_reverse] = ms
 
         except:
             pass
 
         # Делаем редукцию матрицы
 
-        mat = np.zeros(selected.mat.shape, dtype=np.int64)
-        np.copyto(mat, selected.mat)
-
-        mat = np.delete(mat, src, 0)
-        mat = np.delete(mat, dst, 1)
+        mat_with_path = np.delete(mat_with_path, src, 0)
+        mat_with_path = np.delete(mat_with_path, dst, 1)
 
         # Делаем редукцию строк и столбцов
 
-        new_bound = selected.bound + calculate_bound(mat)
+        new_bound = selected.bound + calculate_bound(mat_with_path)
 
         # Добавляем в очередь ветку, где включили маршрут
         # Здесь нижняя грань - это сумма старой грани и минимумов из редукции
 
-        queue.append(Branch(mat, selected.path + [(src_city, dst_city)], new_bound))
+        queue.append(Branch(mat_with_path, selected.path + [(src_city, dst_city)], new_bound))
 
         # Теперь рассмотрим ветвь, где этот маршрут не включён
 
