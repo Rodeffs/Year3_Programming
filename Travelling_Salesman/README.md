@@ -2,7 +2,11 @@
 
 ## Full graph symmetric
 
-![graph](./graphs/graph_tsp_symmetric.png "Full graph symmetric")
+![graphSym](./graphs/graph_tsp_symmetric.png "Full graph symmetric")
+
+## Optimal path for symmetric
+
+![graphSymPath](./graphs/graph_tsp_symmetric_optimal.png "Optimal path symmetric")
 
 ## Full graph asymmetric
 
