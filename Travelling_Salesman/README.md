@@ -1,6 +1,10 @@
 # Travelling Salesman problem
 
-## Full graph
+## Full graph symmetric
+
+![graph](./graphs/graph_tsp_symmetric.png "Full graph symmetric")
+
+## Full graph asymmetric
 
 ![graph](./graphs/graph_tsp.png "Full graph")
 
