@@ -79,10 +79,7 @@ def calculate_loss(mat):
                 min_in_row = np.min(mat[i, 1:])
                 min_in_col = np.min(mat[1:, j])
 
-                loss = ms
-
-                if min_in_col < ms and min_in_row < ms:
-                    loss = min_in_col + min_in_row
+                loss = ms if (min_in_col >= ms or min_in_row >= ms) else min_in_col + min_in_row
 
                 if loss >= max_loss:
                     max_loss = loss
@@ -209,13 +206,9 @@ def bounds_branches(mat):
         # Здесь нижняя грань - это сумма старой грани и минимумов из редукции
         
         new_bound = calculate_bound(with_path.mat)
+
+        with_path.bound = ms if (new_bound >= ms or selected.bound >= ms) else selected.bound + new_bound
         
-        if new_bound >= ms or selected.bound >= ms:
-            with_path.bound = ms
-
-        else:
-            with_path.bound = selected.bound + new_bound
-
         # Добавляем в очередь ветку, где включили маршрут
 
         queue.append(with_path)
@@ -233,11 +226,7 @@ def bounds_branches(mat):
 
         calculate_bound(without_path.mat)
 
-        if selected.bound >= ms or loss >= ms:
-            without_path.bound = ms
-
-        else:
-            without_path.bound = selected.bound + loss
+        without_path.bound = ms if (selected.bound >= ms or loss >= ms) else selected.bound + loss
 
         # Добавляем в очередь ветку, где не включили маршрут
 
