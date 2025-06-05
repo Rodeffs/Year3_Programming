@@ -1,9 +1,8 @@
 import numpy as np
 import copy
 import time
-ms = np.iinfo(np.int32).max
-
 from random import uniform
+ms = np.iinfo(np.int32).max
 
 
 class Branch: # Класс, который будет хранить каждую ветвь
@@ -39,26 +38,20 @@ class Branch: # Класс, который будет хранить кажду�
 
 
 def print_mat(mat):  # для отладок
-    city_names = ['/', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-
     for i in range(mat.shape[0]):
         output = ""
 
         for j in range(mat.shape[1]):
-            if i == 0 or j == 0:
-                output += " " + city_names[mat[i][j]] + " "
+            value = mat[i][j]
+
+            if value < 10:
+                output += " " + str(value) + " "
+
+            elif value < ms:
+                output += str(value) + " "
 
             else:
-                value = mat[i][j]
-
-                if value < 10:
-                    output += " " + str(value) + " "
-
-                elif value < ms:
-                    output += str(value) + " "
-
-                else:
-                    output += " ∞ "
+                output += " ∞ "
 
         print(output)
 
@@ -310,7 +303,6 @@ def main():
         ], dtype=np.int32)
     """
 
-    """
     # Исходная задача
 
     mat = np.array([
@@ -336,11 +328,11 @@ def main():
         [19,  2, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, 39, ms, 81, 57, ms, 46],
         [20, 12, 54, ms, 43, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, 65, ms, 59,  1, 46, ms]
         ], dtype=np.int32)
+    
     """
-
     # Тест
 
-    test_size = 27
+    test_size = 51
     mat = np.zeros((test_size, test_size), dtype=np.int32)
 
     for i in range(test_size):
@@ -356,18 +348,17 @@ def main():
 
             else:
                 mat[i][j] = int(uniform(1, 100))
+    """
 
-    print("Исходная матрица")
+    print("Initial matrix:")
     print_mat(mat)
     
     final_path, final_bound = bounds_branches(mat)
 
-    city_names = ['/', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-
     print("Optimal path:")
 
     for path in final_path:
-        print(city_names[path[0]], "->", city_names[path[1]])
+        print(path[0], "->", path[1])
 
     print("\nTotal cost:", final_bound)
 
