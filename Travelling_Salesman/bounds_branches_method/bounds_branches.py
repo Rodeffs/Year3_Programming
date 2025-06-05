@@ -151,8 +151,6 @@ def remove_cycle(branch):  # избегание подциклов
 
 
 def bounds_branches(mat):
-    final_path, final_bound = [], 0
-        
     # Корень дерева решения
 
     root = Branch(mat, [], 0)
@@ -177,8 +175,7 @@ def bounds_branches(mat):
         if selected.mat.shape[0] <= 2:
             selected.path.append([(src_cities[1], dst_cities[1])])
             selected.path = sort_path(selected.path)
-            final_path, final_bound = selected.path[0], selected.bound
-            break
+            return selected.path[0], selected.bound
 
         # Делаем оценки и находим маршрут
         
@@ -231,8 +228,6 @@ def bounds_branches(mat):
         # Добавляем в очередь ветку, где не включили маршрут
 
         queue.append(without_path)
-
-    return final_path, final_bound
 
 
 def main():
