@@ -37,27 +37,6 @@ class Branch: # Класс, который будет хранить кажду�
         self._path = value
 
 
-def print_mat(mat):  # для отладок
-    for i in range(mat.shape[0]):
-        output = ""
-
-        for j in range(mat.shape[1]):
-            value = mat[i][j]
-
-            if value < 10:
-                output += " " + str(value) + " "
-
-            elif value < ms:
-                output += str(value) + " "
-
-            else:
-                output += " ∞ "
-
-        print(output)
-
-    print()
-
-
 def calculate_bound(mat):
     values_mat = mat[1:, 1:]
 
@@ -351,11 +330,27 @@ def main():
     """
 
     print("Initial matrix:")
-    print_mat(mat)
-    
+
+    for i in range(mat.shape[0]):
+        output = ""
+
+        for j in range(mat.shape[1]):
+            value = mat[i][j]
+
+            if value < 10:
+                output += " " + str(value) + " "
+
+            elif value < ms:
+                output += str(value) + " "
+
+            else:
+                output += " ∞ "
+
+        print(output)
+
     final_path, final_bound = bounds_branches(mat)
 
-    print("Optimal path:")
+    print("\nOptimal path:")
 
     for path in final_path:
         print(path[0], "->", path[1])
