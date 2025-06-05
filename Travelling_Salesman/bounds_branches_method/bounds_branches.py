@@ -38,11 +38,9 @@ class Branch: # Класс, который будет хранить кажду�
 
 
 def calculate_bound(mat):
-    values_mat = mat[1:, 1:]
-
     # Редукция строк
 
-    min_rows = np.min(values_mat, axis=1)
+    min_rows = np.min(mat[1:, 1:], axis=1)
 
     for i in range(1, mat.shape[0]):
         for j in range(1, mat.shape[1]):
@@ -51,7 +49,7 @@ def calculate_bound(mat):
     
     # Редукция столбцов
 
-    min_cols = np.min(values_mat, axis=0)
+    min_cols = np.min(mat[1:, 1:], axis=0)
 
     for i in range(1, mat.shape[0]):
         for j in range(1, mat.shape[1]):
