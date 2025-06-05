@@ -61,18 +61,7 @@ def calculate_bound(mat):
     if ms in min_rows or ms in min_cols:
         return ms
 
-    row_sum = np.sum(min_rows)
-    col_sum = np.sum(min_cols)
-
-    if row_sum >= ms or col_sum >= ms:
-        return ms
-
-    total_sum = row_sum + col_sum
-    
-    if total_sum >= ms:
-        return ms
-
-    return total_sum
+    return np.sum(min_rows) + np.sum(min_cols)
 
 
 def calculate_loss(mat):
@@ -90,12 +79,9 @@ def calculate_loss(mat):
                 min_in_row = np.min(mat[i, 1:])
                 min_in_col = np.min(mat[1:, j])
 
-                loss = 0
+                loss = ms
 
-                if min_in_col >= ms or min_in_row >= ms:
-                    loss = ms
-
-                else:
+                if min_in_col < ms and min_in_row < ms:
                     loss = min_in_col + min_in_row
 
                 if loss >= max_loss:
