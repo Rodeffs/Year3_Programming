@@ -54,9 +54,10 @@ def ant_compute(ant, mat, pheromones, a, b):
 
         for i in range(available_count):
             if (random_value <= available_cities[i][1] + prev_probability) or (i == available_count - 1):
-                ant_path.append(available_cities[i][0])
-                ant_length += mat[ant_city][available_cities[i][0]]
-                ant_city = available_cities[i][0]
+                next_city = available_cities[i][0]
+                ant_path.append(next_city)
+                ant_length += mat[ant_city][next_city]
+                ant_city = next_city
                 break
 
             else:
