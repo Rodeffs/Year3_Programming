@@ -276,31 +276,14 @@ def main():
                 mat[i][j] = int(uniform(1, 100))
     """
 
-    print("Initial matrix:")
-
-    for i in range(mat.shape[0]):
-        output = ""
-
-        for j in range(mat.shape[1]):
-            value = mat[i][j]
-
-            if value < 10:
-                output += " " + str(value) + " "
-
-            elif value < ms:
-                output += str(value) + " "
-
-            else:
-                output += " ∞ "
-
-        print(output)
-
     final_path, final_bound = bounds_branches(mat)
+
+    cities = ['/', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
     print("\nOptimal path:")
 
     for path in final_path:
-        print(path[0], "->", path[1])
+        print(cities[path[0]], "->", cities[path[1]])
 
     print("\nTotal cost:", final_bound)
 

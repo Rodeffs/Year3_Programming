@@ -140,14 +140,16 @@ def main():
     a = 1.5  # коэф. влияния феромона (a >= 0)
     b = 2.0  # коэф. влияния расстояния (b >= 1)
     p = 0.2  # коэф. испарения феромона (0 <= p <= 1)
-    count_it = 100  # количество итераций
+    count_it = 50  # количество итераций
 
     final_path, final_length = ant_colony(mat, a, b, p, count_it)
+
+    cities = ['/', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
     print("Optimal path:")
 
     for i in range(len(final_path) - 1):
-        print(final_path[i], "->", final_path[i+1])
+        print(cities[final_path[i]], "->", cities[final_path[i+1]])
 
     print("\nTotal cost:", final_length)
 
