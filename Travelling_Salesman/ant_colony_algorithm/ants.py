@@ -4,55 +4,120 @@ from random import uniform
 ms = np.iinfo(np.int32).max
 
 
-class Ant: # Класс, который будет хранить каждого муравья
-    def __init__(self, mat, pheros):
-        self._path = []
-        self._mat = mat
-        self._pheros = np.zeros(pheros.shape, dtype=np.int32)
-        np.copyto(self._pheros, pheros)
+def ant_compute(ant, mat, pheromones, a, b):
+    n = mat.shape[0]
+    
+    ant_city = ant
+    ant_path = [ant_city]
+    ant_length = 0
 
+    while True:
+        total_want = 0
+        available_cities = []
 
-    @property
-    def mat(self):
-        return self._mat
+        for adjacent_city in range(1, n):
+            distance = mat[ant_city][adjacent_city]
+            
+            if distance != ms:
+                # Критерий остановки, если все города обошли и следующий путь ведёт в начало, то идём по нему
 
-    @mat.setter
-    def mat(self, value):
-        self._mat = value
+                if len(ant_path) == n and adjacent_city == ant:
+                    ant_path.append(adjacent_city)
+                    ant_length += distance
+                    return ant_path, ant_length
 
-    @property
-    def pheros(self):
-        return self._pheros
+                # Иначе же, если по этому городу не шли, то добавляем этот город к доступным и заодно просчитываем суммарное желание муравья
+                
+                elif adjacent_city not in ant_path:
+                    total_want += pheromones[ant_city][adjacent_city]**a + (1/distance)**b
+                    available_cities.append((adjacent_city, 0))
 
-    @pheros.setter
-    def bound(self, value):
-        self._pheros = value
+        available_count = len(available_cities)
 
-    @property
-    def path(self):
-        return self._path
+        # Если из этого города больше нет путей, то муравей зашёл в тупик и его не считаем
 
-    @path.setter
-    def path(self, value):
-        self._path = value
+        if available_count == 0:
+            return 0, []
+        
+        # Вероятность муравья пойти в доступный город
 
+        for i in range(available_count):
+            available_city = available_cities[i][0]
+            available_cities[i][1] = (pheromones[ant_city][available_city]**a + (1/mat[ant_city][available_city])**b)/total_want
 
-def randomly_choose(i, j, mat, pheromones):
-    a = 0.5  # коэф. влияния феромона, определяется эврестически
-    b = 0.5  # коэф. влияния расстояния, определяется эврестически
+        available_cities.sort(key=lambda x: x[1])
 
+        # Случайно выбираем следующий город для муравья, опираясь на вероятность
+
+        random_value = uniform(0,1)
+        prev_probability = 0
+
+        for i in range(available_count):
+            if (random_value <= available_cities[i][1] + prev_probability) or (i == available_count - 1):
+                ant_path.append(available_cities[i][0])
+                ant_length += mat[ant_city][available_cities[i][0]]
+                ant_city = available_cities[i][0]
+                break
+
+            else:
+                prev_probability += available_cities[i][1]
 
 
 def ant_colony(mat):
+    # Эвристики:
+    a = 0.5  # коэф. влияния феромона
+    b = 0.5  # коэф. влияния расстояния
+    q = 1.0  # коэф. обновления феромона
+    p = 0.5  # коэф. испарения феромона (от 0 до 1)
     count_it = 1000  # количество итераций
     
-    pheromones = np.zeros(mat.shape, dtype=np.int32)
+    pheromones = np.zeros(mat.shape, dtype=np.float32)
 
-    np.copyto(pheromones[0], mat[0])
-    np.copyto(pheromones[:, 0], mat[:, 0])
+    final_path, final_length = [], ms
+    n = mat.shape[0]
 
-    
+    for i in range(count_it):
+        new_pheromones = np.zeros(mat.shape, dtype=np.float32)
 
+        # Всего муравьёв столько же, сколько и вершин. Каждый муравей начинает путь из своей вершины
+
+        for ant in range(1, n):
+            ant_path, ant_length = ant_compute(ant, mat, pheromones, a, b)
+
+            # Если муравей зашёл в тупик не обойдя все вершины или не вернувшись в начальную, то ничего не делаем
+            
+            if not ant_path:
+                break
+
+            # Если дошёл, то добавляем в буфер обновления феромонов величину q/L, где L - длина пройденного пути
+            
+            for i in range(n-1):
+                src_city, dst_city = ant_path[i], ant_path[i+1]
+                new_pheromones[src_city][dst_city] += q/ant_length
+            
+            # Если путь оказался наикратчайшим, то сохраняем его
+
+            if ant_length < final_length:
+                final_path = ant_path
+                final_length = ant_length
+
+        # Обновление феромонов
+
+        for j in range(1, n):
+            local_pheromones_sum = 0
+            
+            # Сумма обновления всех феромонов из этой вершины
+
+            for i in range(1, n):
+                local_pheromones_sum += new_pheromones[i][j]
+            
+            # Испарение феромонов
+
+            for i in range(1, n):
+                pheromones[i][j] = p*pheromones[i][j] + local_pheromones_sum
+
+    return final_path, final_length
+            
 
 def main():
     mat = np.array([
@@ -80,15 +145,14 @@ def main():
         ], dtype=np.int32)
 
 
-    final_path, final_bound = ant_colony(mat)
+    final_path, final_length = ant_colony(mat)
 
     print("\nOptimal path:")
 
-    for path in final_path:
-        print(path[0], "->", path[1])
+    for i in range(len(final_path) - 1):
+        print(final_path[i], "->", final_path[i+1])
 
-    print("\nTotal cost:", final_bound)
-
+    print("\nTotal cost:", final_length)
 
 
 if __name__ == "__main__":
