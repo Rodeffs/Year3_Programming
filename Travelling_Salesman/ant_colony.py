@@ -29,7 +29,7 @@ def ant_compute(ant, mat, pheromones, a, b):
                 # Иначе же, если по этому городу не шли, то добавляем этот город к доступным и заодно просчитываем суммарное желание муравья
                 
                 elif adjacent_city not in ant_path:
-                    probability = pheromones[ant_city][adjacent_city]**a + (1/distance)**b
+                    probability = pheromones[ant_city][adjacent_city]**a * (1/distance)**b
                     total_want += probability
                     available_cities.append([adjacent_city, probability])
         
@@ -65,7 +65,7 @@ def ant_compute(ant, mat, pheromones, a, b):
 
 
 def ant_colony(mat, a, b, p, count_it):
-    pheromones = np.zeros(mat.shape, dtype=np.float32)
+    pheromones = np.full(mat.shape, 1, dtype=np.float32)
 
     final_path, final_length = [], ms
     n = mat.shape[0]
