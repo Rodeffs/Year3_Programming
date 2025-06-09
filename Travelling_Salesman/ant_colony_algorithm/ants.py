@@ -144,6 +144,10 @@ def main():
 
     final_path, final_length = ant_colony(mat, a, b, p, count_it)
 
+    if not final_path:
+        print("Failed to find any path due to randomness. Try again")
+        return
+
     cities = ['/', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
     print("Optimal path:")
