@@ -96,18 +96,9 @@ def ant_colony(mat, a, b, p, count_it):
 
         # Обновление феромонов
 
-        for j in range(1, n):
-            local_pheromones_sum = 0
-            
-            # Сумма обновления всех феромонов из этой вершины
-
-            for i in range(1, n):
-                local_pheromones_sum += new_pheromones[i][j]
-            
-            # Испарение феромонов
-
-            for i in range(1, n):
-                pheromones[i][j] = (1-p)*pheromones[i][j] + local_pheromones_sum
+        for i in range(1, n):
+            for j in range(1, n):
+                pheromones[i][j] = (1-p)*pheromones[i][j] + new_pheromones[i][j]
 
     return final_path, final_length
             
@@ -140,7 +131,7 @@ def main():
     # Эвристики:
     a = 1.0  # коэф. влияния феромона (a >= 0)
     b = 2.0  # коэф. влияния расстояния (b >= 1)
-    p = 0.7  # коэф. испарения феромона (0 <= p <= 1)
+    p = 0.3  # коэф. испарения феромона (0 <= p <= 1)
     count_it = 50  # количество итераций
 
     final_path, final_length = ant_colony(mat, a, b, p, count_it)
