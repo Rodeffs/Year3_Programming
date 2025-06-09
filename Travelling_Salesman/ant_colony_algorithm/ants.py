@@ -21,7 +21,7 @@ def ant_compute(ant, mat, pheromones, a, b):
             if distance != ms:
                 # Критерий остановки, если все города обошли и следующий путь ведёт в начало, то идём по нему
 
-                if len(ant_path) == n and adjacent_city == ant:
+                if len(ant_path) == n-1 and adjacent_city == ant:
                     ant_path.append(adjacent_city)
                     ant_length += distance
                     return ant_path, ant_length
@@ -29,9 +29,10 @@ def ant_compute(ant, mat, pheromones, a, b):
                 # Иначе же, если по этому городу не шли, то добавляем этот город к доступным и заодно просчитываем суммарное желание муравья
                 
                 elif adjacent_city not in ant_path:
-                    total_want += pheromones[ant_city][adjacent_city]**a + (1/distance)**b
-                    available_cities.append((adjacent_city, 0))
-
+                    probability = pheromones[ant_city][adjacent_city]**a + (1/distance)**b
+                    total_want += probability
+                    available_cities.append([adjacent_city, probability])
+        
         available_count = len(available_cities)
 
         # Если из этого города больше нет путей, то муравей зашёл в тупик и его не считаем
@@ -42,8 +43,7 @@ def ant_compute(ant, mat, pheromones, a, b):
         # Вероятность муравья пойти в доступный город
 
         for i in range(available_count):
-            available_city = available_cities[i][0]
-            available_cities[i][1] = (pheromones[ant_city][available_city]**a + (1/mat[ant_city][available_city])**b)/total_want
+            available_cities[i][1] /= total_want
 
         available_cities.sort(key=lambda x: x[1])
 
@@ -63,20 +63,13 @@ def ant_compute(ant, mat, pheromones, a, b):
                 prev_probability += available_cities[i][1]
 
 
-def ant_colony(mat):
-    # Эвристики:
-    a = 0.5  # коэф. влияния феромона
-    b = 0.5  # коэф. влияния расстояния
-    q = 1.0  # коэф. обновления феромона
-    p = 0.5  # коэф. испарения феромона (от 0 до 1)
-    count_it = 1000  # количество итераций
-    
+def ant_colony(mat, a, b, p, count_it):
     pheromones = np.zeros(mat.shape, dtype=np.float32)
 
     final_path, final_length = [], ms
     n = mat.shape[0]
 
-    for i in range(count_it):
+    for it in range(count_it):
         new_pheromones = np.zeros(mat.shape, dtype=np.float32)
 
         # Всего муравьёв столько же, сколько и вершин. Каждый муравей начинает путь из своей вершины
@@ -87,13 +80,12 @@ def ant_colony(mat):
             # Если муравей зашёл в тупик не обойдя все вершины или не вернувшись в начальную, то ничего не делаем
             
             if not ant_path:
-                break
+                continue
 
             # Если дошёл, то добавляем в буфер обновления феромонов величину q/L, где L - длина пройденного пути
             
             for i in range(n-1):
-                src_city, dst_city = ant_path[i], ant_path[i+1]
-                new_pheromones[src_city][dst_city] += q/ant_length
+                new_pheromones[ant_path[i]][ant_path[i+1]] += 1/ant_length
             
             # Если путь оказался наикратчайшим, то сохраняем его
 
@@ -114,7 +106,7 @@ def ant_colony(mat):
             # Испарение феромонов
 
             for i in range(1, n):
-                pheromones[i][j] = p*pheromones[i][j] + local_pheromones_sum
+                pheromones[i][j] = (1-p)*pheromones[i][j] + local_pheromones_sum
 
     return final_path, final_length
             
@@ -144,10 +136,15 @@ def main():
         [20, 12, 54, ms, 43, ms, ms, ms, ms, ms, ms, ms, ms, ms, ms, 65, ms, 59,  1, 46, ms]
         ], dtype=np.int32)
 
+    # Эвристики:
+    a = 1.5  # коэф. влияния феромона (a >= 0)
+    b = 2.0  # коэф. влияния расстояния (b >= 1)
+    p = 0.2  # коэф. испарения феромона (0 <= p <= 1)
+    count_it = 100  # количество итераций
 
-    final_path, final_length = ant_colony(mat)
+    final_path, final_length = ant_colony(mat, a, b, p, count_it)
 
-    print("\nOptimal path:")
+    print("Optimal path:")
 
     for i in range(len(final_path) - 1):
         print(final_path[i], "->", final_path[i+1])
